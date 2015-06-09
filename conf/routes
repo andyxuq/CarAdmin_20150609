@@ -1,0 +1,51 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                                       Application.login
+
+# Ignore favicon requests
+GET     /favicon.ico                            404
+
+# Map static resources from the /app/public folder to the /public path
+GET     /public/                                staticDir:public
+GET     /upload/                                staticDir:upload
+
+# Catch all
+#*       /{controller}/{action}                  {controller}.{action}
+
+POST    /userAction/login                       UserManage.doLogin
+GET     /userAction/doLoginOut                  UserManage.doLoginOut
+
+#Client route
+*       /clientAction/showClient                ClientManage.showClientInfo
+POST    /clientAction/saveClient                ClientManage.saveClientInfo
+GET     /clientAction/showClientData            ClientManage.addClientInfo
+GET     /clientAction/deleteClientData          ClientManage.deleteClientInfo
+
+GET     /clientAction/showCarType               ClientManage.showCarType
+POST    /clientAction/addCarType                ClientManage.addCarType
+GET     /clientAction/modifyCarType             ClientManage.modifyCarType
+GET     /clientAction/deleteCarType             ClientManage.deleteCarType
+
+#Client Car
+*       /clientCar/showClientCar                ClientCar.showClientCar
+GET     /clientCar/addClientCar                 ClientCar.addClientCar
+GET     /clientCar/deleteClientCar              ClientCar.deleteClientCar
+POST    /clientCar/saveClientCar                ClientCar.saveClientCar
+
+#Car Record
+*       /clientRecord/showCarRecord             RecordManage.showCarRecord
+GET     /clientRecord/addCarRecord              RecordManage.addCarRecord
+GET     /clientRecord/deleteCarRecord           RecordManage.deleteCarRecord
+POST    /clientRecord/saveCarRecord             RecordManage.saveCarRecord
+
+#Admin user
+*       /adminUser/showAdminUser                AdminUser.showAdminUser
+GET     /adminUser/addAdminUser                 AdminUser.addUserInfo
+GET     /adminUser/deleteAdminUser              AdminUser.deleteUserInfo
+POST    /adminUser/saveAdminUser                AdminUser.saveUserInfo
+
+#Store Brand
+*       /StoreBrand/{action}                    BrandController.{action}

@@ -1,0 +1,141 @@
+
+<!-- 添加/修改数据对话框 -->
+<div class="modal fade" id="addData" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                #{if null != car}
+                    <h2 class="modal-title" id="myModalLabel">添加客户[${car.client.userName}]用车信息</h2>
+                #{/if}
+                #{else }
+                    <h2 class="modal-title" id="myModalLabel">添加客户[${carUser?.userName}]用车信息</h2>
+                #{/else}
+            </div>
+        #{form @ClientCar.saveClientCar(), method:'POST', enctype :'multipart/form-data', id:'dataForm'}
+            #{if null != car}
+                <input  type="hidden" name="car.id" value="${car.id}"/>
+            #{/if}
+            <input type="hidden" name="car.logo" value="${car?.logo}"/>
+            #{if null != car}
+                <input type="hidden" name="car.client.id" value="${car.client.id}"/>
+            #{/if}
+            #{else }
+                <input type="hidden" name="car.client.id" value="${carUser.id}"/>
+            #{/else}
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="brandName">车牌号：</label>
+                    <input type="text" class="form-control" name="car.carNo" id="carNo" value="${car?.carNo}" placeholder="请输入车牌号">
+                    <span class="note_e" id="carNo_note"></span>
+                </div>
+                <div class="form-group">
+                    <label for="brandName">汽车型号：</label>
+                    <select class="form-control" name="car.modelId" id="modelId" >
+                        #{list ctList, as:'carType'}
+                            #{if null != car && car.modelId == carType.id}
+                                <option value="${carType.id}" selected="selected">[${carType.getBrandName()}]${carType.name}</option>
+                            #{/if}
+                            #{else }
+                                <option value="${carType.id}">[${carType.getBrandName()}]${carType.name}</option>
+                            #{/else}
+                        #{/list}
+                    </select>
+                    <span class="note_e" id="modelId_note"></span>
+                </div>
+                <div class="form-group">
+                    <label for="modelName">汽车图片：</label>
+                    <input type="file" class="form-control" name="carLogo"  id="carLogo"  />
+                    <span class="note_e" id="carLogo_note"></span>
+                </div>
+                <div class="form-group">
+                    <label for="brandName">轮胎尺寸：</label>
+                    <input type="text" class="form-control" name="car.tireSize" id="tireSize" value="${car?.tireSize}" placeholder="请输入轮胎尺寸">
+                    <span class="note_e" id="tireSize_note"></span>
+                </div>
+                <div class="form-group">
+                    <label for="brandName">车架号：</label>
+                    <input type="text" class="form-control" name="car.carFrameNo" id="carFrameNo" value="${car?.carFrameNo}" placeholder="请输入车架号">
+                    <span class="note_e" id="tireSize_note"></span>
+                </div>
+                <div class="form-group">
+                    <label for="brandName">购车日期：</label>
+                    <input type="text" class="form-control" name="buyDate" id="buyDate" value="${car?.getDateString(buyDate)}">
+                    <span class="note_e" id="buyDate_note"></span>
+                </div>
+                <div class="form-group">
+                    <label for="brandName">保险公司：</label>
+                    <input type="text" class="form-control" name="car.insuranceCompany" id="insuranceCompany" value="${car?.insuranceCompany}" placeholder="请输入保险公司">
+                    <span class="note_e" id="insuranceCompany_note"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="submit" class="btn btn-primary" id="addDataSubmit">保存</button>
+            </div>
+        #{/form}
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $("#addData").modal('show');
+
+    $(".datepicker").remove();
+    $('#buyDate').datepicker({
+        format: "yyyy-mm-dd",
+        language: "zh-CN"
+    }).click(function(){
+        $(this).datepicker('show');
+        $(".datepicker").css("z-index", '999999');
+        $(".datepicker").click(function(){
+            $(".datepicker").css("z-index", '999999');
+        });
+    });
+
+
+
+    var nameArray = [
+        {"name":"carNo", "msg":"请输如车牌号"}];
+    $("#dataForm").submit(function(e){
+        e.preventDefault();
+        for (var index in nameArray) {
+            var node = nameArray[index];
+            if ($("#" + node.name).val().trim().length == 0) {
+                $("#" + node.name + "_note").html(node.msg);
+                return;
+            }
+        }
+
+        //异步提交表单
+        var option = {
+            url : this.action,
+            type : 'POST',
+            dataType : 'json',
+            success : function(data) {
+                $("#addData").modal('toggle');
+                if (data == 'undefined') {
+                    balert('操作失败');
+                    return;
+                }
+                if (data.code != 0) {
+                    balert('操作失败:' + data.msg);
+                } else {
+                    balert('操作成功', function(){
+                        #{if null == carUser}
+                            showContent('/clientCar/showClientCar');
+                        #{/if}
+                        #{else }
+                            showContent('/clientCar/showClientCar?clientId=' + ${carUser.id});
+                        #{/else}
+                    });
+                }
+            },
+            error : function() {
+                balert('提交失败');
+            }
+        }
+        $('#dataForm').ajaxSubmit(option);
+        return false;
+    });
+</script>

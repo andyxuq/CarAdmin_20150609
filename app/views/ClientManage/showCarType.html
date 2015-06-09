@@ -1,0 +1,102 @@
+*{#{extends 'main.html'/}}*
+*{#{set title : '汽车品牌管理'/}}*
+
+<section class="content-header">
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">汽车品牌列表</h3>
+                    <div class="box-footer clearfix no-border">
+                        <button class="btn btn-default pull-left" id="addCarType" data-toggle="modal"><i class="fa fa-plus"></i>添加品牌</button>
+                    </div>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                    <table id="carTypeTable" class="table table-bordered">
+                        <tr>
+                            <th style="width: 25px">ID</th>
+                            <th>品牌</th>
+                            <th>型号</th>
+                            <th style="width:150px">操作</th>
+                        </tr>
+                    #{list carTypeList, as : 'carType'}
+                        <tr>
+                            <td>${carType.id}</td>
+                            <td>${carType.getBrandName()}</td>
+                            <td>${carType.name}</td>
+                            <td>
+                                <div class="btn-group" role="group" >
+                                    <button type="button" class="btn btn-primary" onclick="modifyCarType(${carType.id});">[修改]</button>
+                                    <button type="button" class="btn btn-danger" onclick="deleteCarType(${carType.id});">[删除]</button>
+                                </div>
+                            </td>
+                        </tr>
+                    #{/list}
+                    </table>
+                </div><!-- /.box-body -->
+                <div class="box-footer clearfix">
+                    <div class="pagination pagination-sm no-margin pull-left">
+                        当前第${pageModel.currentPage}页共${pageModel.count}条记录
+                    </div>
+                    <ul class="pagination pagination-sm no-margin pull-right">
+                        <li><a href="#" onclick="showContent('/clientAction/showCarType?page=${pageModel.currentPage - 1}')">&laquo;</a></li>
+                        #{if pageModel.totalPage !=0 }
+                            #{list 1..pageModel.totalPage, as:'pageNum'}
+                                <li>#{a @ClientManage.showCarType(pageNum)}${pageNum}#{/a}</li>
+                            #{/list}
+                        #{/if}
+                        <li><a href="#" onclick="showContent('/clientAction/showCarType?page=${pageModel.currentPage + 1}')">&raquo;</a></li>
+                    </ul>
+                </div>
+            </div><!-- /.box -->
+        </div>
+    </div>
+</section>
+
+<!-- 用以添加/修改对象的对话框容器 -->
+<div id="modifyTypeModal">
+
+</div>
+
+<script type="text/javascript">
+    $("#addCarType").click(function(){
+        var action = #{jsAction @ClientManage.modifyCarType(':modelId')/};
+        $("#modifyTypeModal").load(
+            action({modelId:'0'}),
+            function(){}
+        )
+    });
+    function modifyCarType(modelId) {
+        var action = #{jsAction @ClientManage.modifyCarType(':modelId')/};
+        $("#modifyTypeModal").load(
+            action({modelId:'' + modelId}),
+            function(){}
+        )
+    }
+    function deleteCarType(modelId) {
+        bconfirm('确定删除吗？', function(){
+            var action = #{jsAction @ClientManage.deleteCarType(':modelId')/};
+            console.log('aaa');
+            $.get(
+                action({modelId:'' + modelId}),
+                function(data){
+                    if (data == 'undefined') {
+                        balert('操作失败');
+                        return;
+                    }
+                    if (data.code != 0) {
+                        balert('操作失败:' + data.msg);
+                    } else {
+                        balert('操作成功', function(){
+                            showContent('/clientAction/showCarType');
+                        });
+                    }
+                }
+            )
+        });
+    }
+</script>

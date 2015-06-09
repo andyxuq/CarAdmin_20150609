@@ -1,0 +1,116 @@
+*{#{extends 'main.html'/}}*
+*{#{set title : '后台管理系统'/}}*
+
+<section class="content-header">
+    <h1>
+        品牌管理
+        <small>品牌管理</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">品牌管理</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">品牌信息列表</h3>
+                    <div class="form-inline" style="margin-top:16px">
+                        <div class="input-group">
+
+                        </div>
+                        <div class="input-group">
+
+                        </div>
+                        <button class="btn btn-default" id="addClient" data-toggle="modal"><i class="fa fa-plus"></i>添加品牌</button>
+                    </div>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                    <table id="clientInfoTable" class="table table-bordered">
+                        <tr>
+                            <th style="width: 25px">ID</th>
+                            <th>品牌名称</th>
+                            <th>添加时间</th>
+
+                            <th style="width: 250px">操作</th>
+                        </tr>
+                    #{list brandList, as : 'brand'}
+                        <tr>
+                            <td>${brand.id}</td>
+                            <td>${brand.name}</td>
+                            <td>${brand.getCreatedAt()}</td>
+                            <td>
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <button type="button" class="btn btn-primary" onclick="modifyData(${brand.id});">[修改]</button>
+                                    <button type="button" class="btn btn-danger"  onclick="deleteData(${brand.id});">[删除]</button>
+                                </div>
+                            </td>
+                        </tr>
+                    #{/list}
+                    </table>
+                </div><!-- /.box-body -->
+                <div class="box-footer clearfix">
+                    <div class="pagination pagination-sm no-margin pull-left">
+                        当前第${pageModel.currentPage}页共${pageModel.count}条记录
+                    </div>
+                    <ul class="pagination pagination-sm no-margin pull-right">
+                        <li><a href="#" onclick="showContent('/BrandController/getBrand?page=${pageModel.currentPage - 1}')">&laquo;</a></li>
+                    #{if pageModel.totalPage !=0 }
+                        #{list 1..pageModel.totalPage, as:'pageNum'}
+                            <li><a href="#" onclick="showContent('/BrandController/getBrand?page=${pageNum}')">${pageNum}</a></li>
+                        #{/list}
+                    #{/if}
+                        <li><a href="#" onclick="showContent('/BrandController/getBrand?page=${pageModel.currentPage + 1}')">&raquo;</a></li>
+                    </ul>
+                </div>
+            </div><!-- /.box -->
+        </div>
+    </div>
+</section>
+<!-- 用以添加/修改对象的对话框容器 -->
+<div id="modifyTypeModal">
+
+</div>
+
+<script type="text/javascript">
+    $("#addClient").click(function(){
+        var action = #{jsAction @BrandController.showBrand(':brandId')/};
+        $("#modifyTypeModal").load(
+                action({brandId:'0'}),
+                function(){}
+        )
+    });
+    function modifyData(brandId) {
+        var action = #{jsAction @BrandController.showBrand(':brandId')/};
+        $("#modifyTypeModal").load(
+                action({brandId:brandId}),
+                function(){}
+        )
+    }
+
+    function deleteData(brandId) {
+        bconfirm('确定删除吗？', function(){
+            var action = #{jsAction @BrandController.deleteBrand(':brandId')/};
+            $.get(
+                    action({brandId:'' + brandId}),
+                    function(data){
+                        if (data == 'undefined') {
+                            balert('操作失败');
+                            return;
+                        }
+                        if (data.code != 0) {
+                            balert('操作失败:' + data.msg);
+                        } else {
+                            balert('操作成功', function(){
+                                showContent('/StoreBrand/getBrand');
+                            });
+                        }
+                    }
+            )
+        });
+    }
+</script>

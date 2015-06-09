@@ -1,0 +1,240 @@
+*{#{extends 'main.html'/}}*
+*{#{set title : '后台管理系统'/}}*
+
+<section class="content-header">
+    <h1>
+        客户管理
+        <small>客户信息统计</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">客户管理</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <!-- Small boxes (Stat box) -->
+    <div class="row">
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-aqua">
+                <div class="inner">
+                    <h3>${totalClient}</h3>
+                    <p>总客户数</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-person-add"></i>
+                </div>
+                <a href="#" class="small-box-footer">更多信息...<i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div><!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3>${finishRecord}</h3>
+                    <p>已完成单子数</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-stats-bars"></i>
+                </div>
+                <a href="#" onclick="showFinishRecord();" class="small-box-footer">更多信息...<i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div><!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-yellow">
+                <div class="inner">
+                    <h3>${processRecord}</h3>
+                    <p>进行中单子数</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-stats-bars"></i>
+                </div>
+                <a href="#" onclick="showProcessRecord();" class="small-box-footer">更多信息...<i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div><!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-red">
+                <div class="inner">
+                    <h3>${complainRecord}</h3>
+                    <p>投诉单子总数</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-pie-graph"></i>
+                </div>
+                <a href="#" class="small-box-footer">更多信息...<i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div><!-- ./col -->
+    </div><!-- /.row -->
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">客户信息表</h3>
+                    <div class="form-inline" style="margin-top:16px">
+                        <div class="input-group">
+                            #{form @ClientManage.showClientInfo(), method:'POST', enctype :'multipart/form-data', id:'queryByName'}
+                                <input type="text" name="clientName" class="form-control input-sm pull-left" style="width: 170px;" placeholder="请输入客户名"/>
+                                <div class="input-group-btn pull-left">
+                                    <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
+                                </div>
+                            #{/form}
+                        </div>
+                        <div class="input-group">
+                            #{form @ClientManage.showClientInfo(), method:'POST', enctype :'multipart/form-data', id:'queryByPhone'}
+                                <input type="text" name="clientPhone" class="form-control input-sm pull-left" style="width: 170px;" placeholder="请输入电话号码"/>
+                                <div class="input-group-btn pull-left">
+                                    <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
+                                </div>
+                            #{/form}
+                        </div>
+                        <button class="btn btn-default" id="addClient" data-toggle="modal"><i class="fa fa-plus"></i>添加客户</button>
+                    </div>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                    <table id="clientInfoTable" class="table table-bordered">
+                        <tr>
+                            <th style="width: 25px">ID</th>
+                            <th>客户名</th>
+                            <th>电话</th>
+                            <th>头像</th>
+                            <th>地址</th>
+                            <th>备注</th>
+                            <th style="width: 90px">服务次数</th>
+                            <th style="width: 250px">操作</th>
+                        </tr>
+                    #{list clientList, as : 'client'}
+                        <tr>
+                            <td>${client.id}</td>
+                            <td>${client.userName}</td>
+                            <td>${client.phone}</td>
+                            <td><img src="${client.logo}" onmouseover="showOrignal(${client.id}, this)" onmouseout="disableOrignal(${client.id}, this);"/></td>
+                            <td>${client.address}</td>
+                            <td>${client.note}</td>
+                            <td><span class="badge bg-light-blue">${client.getClientTimes()}</span></td>
+                            <td>
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <button type="button" class="btn btn-default" onclick="addCarInfo(${client.id});">[添加用车]</button>
+                                    <button type="button" class="btn btn-primary" onclick="modifyData(${client.id});">[修改]</button>
+                                    <button type="button" class="btn btn-danger"  onclick="deleteData(${client.id});">[删除]</button>
+                                </div>
+                            </td>
+                        </tr>
+                    #{/list}
+                    </table>
+                </div><!-- /.box-body -->
+                <div class="box-footer clearfix">
+                    <div class="pagination pagination-sm no-margin pull-left">
+                        当前第${pageModel.currentPage}页共${pageModel.count}条记录
+                    </div>
+                    <ul class="pagination pagination-sm no-margin pull-right">
+                        <li><a href="#" onclick="showContent('/clientAction/showClient?page=${pageModel.currentPage - 1}&finished=${pageModel.finished == 1 ? 1 : ''}&processing=${pageModel.process == 1 ? 1 : ''}')">&laquo;</a></li>
+                        #{if pageModel.totalPage !=0 }
+                            #{list 1..pageModel.totalPage, as:'pageNum'}
+                                <li><a href="#" onclick="showContent('/clientAction/showClient?page=${pageNum}&finished=${pageModel.finished == 1 ? 1 : ''}&processing=${pageModel.process == 1 ? 1 : ''}')">${pageNum}</a></li>
+                            #{/list}
+                        #{/if}
+                        <li><a href="#" onclick="showContent('/clientAction/showClient?page=${pageModel.currentPage + 1}&finished=${pageModel.finished == 1 ? 1 : ''}&processing=${pageModel.process == 1 ? 1 : ''}')">&raquo;</a></li>
+                    </ul>
+                </div>
+            </div><!-- /.box -->
+        </div>
+    </div>
+</section>
+<!-- 用以添加/修改对象的对话框容器 -->
+<div id="modifyTypeModal">
+
+</div>
+
+<script type="text/javascript">
+    $("#addClient").click(function(){
+        var action = #{jsAction @ClientManage.addClientInfo(':clientId')/};
+        $("#modifyTypeModal").load(
+                action({clientId:'0'}),
+                function(){}
+        )
+    });
+    function modifyData(clientId) {
+        var action = #{jsAction @ClientManage.addClientInfo(':clientId')/};
+        $("#modifyTypeModal").load(
+                action({clientId:clientId}),
+                function(){}
+        )
+    }
+    function addCarInfo(clientId) {
+        $.ajax({
+            url : '/clientCar/addClientCar?clientId=' + clientId,
+            method : 'GET',
+            success : function(data) {
+                $("#modifyTypeModal").html(data);
+            },
+            error : function() {
+                balert('操作失败');
+            }
+        });
+    }
+    function deleteData(clientId) {
+        bconfirm('确定删除吗？', function(){
+            var action = #{jsAction @ClientManage.deleteClientInfo(':clientId')/};
+            $.get(
+                    action({clientId:'' + clientId}),
+                    function(data){
+                        if (data == 'undefined') {
+                            balert('操作失败');
+                            return;
+                        }
+                        if (data.code != 0) {
+                            balert('操作失败:' + data.msg);
+                        } else {
+                            balert('操作成功', function(){
+                                showContent('/clientAction/showClient');
+                            });
+                        }
+                    }
+            )
+        });
+    }
+    $("#queryByName").submit(function(e){
+        e.preventDefault();
+        //异步提交表单
+        var option = {
+            url : this.action,
+            type : 'POST',
+            success : function(data) {
+                $("body div.content-wrapper").html(data);
+            },
+            error : function() {
+                balert('查询失败');
+            }
+        }
+        $('#queryByName').ajaxSubmit(option);
+        return false;
+    });
+    $("#queryByPhone").submit(function(e){
+        e.preventDefault();
+        //异步提交表单
+        var option = {
+            url : this.action,
+            type : 'POST',
+            success : function(data) {
+                $("body div.content-wrapper").html(data);
+            },
+            error : function() {
+                balert('查询失败');
+            }
+        }
+        $('#queryByPhone').ajaxSubmit(option);
+        return false;
+    });
+
+    function showFinishRecord() {
+        showContent('/clientRecord/showCarRecord?finished=1');
+    }
+    function showProcessRecord() {
+        showContent('/clientRecord/showCarRecord?processing=1');
+    }
+</script>

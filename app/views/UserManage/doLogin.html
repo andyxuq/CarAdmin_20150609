@@ -1,0 +1,84 @@
+#{extends 'main.html'/}
+#{set title='首页' /}
+
+%{
+    uLogoPath = "";
+    if (userInfo.logo == null || userInfo.logo.equals("")) {
+        uLogoPath = "/upload/img/user3-128x128.jpg";
+    } else {
+        uLogoPath = userInfo.logo;
+    }
+%}
+#{set uNickName : userInfo.nickName /}
+#{set uLogo : uLogoPath /}
+#{set uCreatedAt : userInfo.getDateString() /}
+<!-- Main content -->
+<section class="invoice">
+    <!-- title row -->
+    <div class="row">
+        <div class="col-xs-12">
+            <h2 class="page-header">
+                <i class="fa fa-globe"></i> 你好：${userInfo.nickName}
+                <small class="pull-right">加入日期: ${userInfo.getDateString()}</small>
+            </h2>
+        </div><!-- /.col -->
+    </div>
+    <!-- info row -->
+    <div class="row invoice-info">
+        <div class="col-sm-4 invoice-col">
+            <address>
+                <strong>我的手机号：${userInfo.phone}</strong><br>
+            </address>
+        </div><!-- /.col -->
+        <div class="col-sm-4 invoice-col">
+            <address>
+                <strong>完成的单子总数：${finishNum}</strong><br>
+            </address>
+        </div><!-- /.col -->
+        <div class="col-sm-4 invoice-col">
+            <address>
+                <strong>正在进行中的单子数：${workNum}</strong><br>
+            </address>
+        </div><!-- /.col -->
+    </div><!-- /.row -->
+
+    <br/>
+    <hr/>
+    <!-- Table row -->
+    <div class="row">
+        <div class="col-xs-12 table-responsive">
+            <p class="lead"><strong>我的单子记录:</strong></p>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>车牌号</th>
+                        <th>类型</th>
+                        <th>需求</th>
+                        <th>备注</th>
+                        <th>开始日期</th>
+                        <th>完成日期</th>
+                        <th>交车日期</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    #{list recordList, as: 'record'}
+                        <tr>
+                            <td>${record.car.carNo}</td>
+                            #{if record.type == 1}
+                                <td>保养</td>
+                            #{/if}
+                            #{else }
+                                <td>维护</td>
+                            #{/else}
+                            <td>${record.requireNote}</td>
+                            <td>${record.recordNote}</td>
+                            <td>${record.getDateString(record.recordDate)}</td>
+                            <td>${record.getDateString(record.finishDate)}</td>
+                            <td>${record.getDateString(record.backDate)}</td>
+                        </tr>
+                    #{/list}
+                </tbody>
+            </table>
+        </div><!-- /.col -->
+    </div><!-- /.row -->
+</section><!-- /.content -->

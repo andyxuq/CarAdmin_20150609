@@ -1,0 +1,77 @@
+
+<!-- 添加/修改数据对话框 -->
+<div class="modal fade" id="addData" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                #{if null != brand}
+                    <h2 class="modal-title" id="myModalLabel">修改信息</h2>
+                #{/if}
+                #{else }
+                    <h2 class="modal-title" id="myModalLabel">添加信息</h2>
+                #{/else}
+            </div>
+        #{form @BrandController.saveBrand(), method:'POST', enctype :'multipart/form-data', id:'dataForm'}
+            #{if null != brand}
+                <input  type="hidden" name="brand.id" value="${brand.id}"/>
+            #{/if}
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="brandName">品牌名：</label>
+                    <input type="text" class="form-control" name="brand.name" id="brandName" value="${brand?.name}" placeholder="请输入品牌名">
+                    <span class="note_e" id="brandName_note"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="submit" class="btn btn-primary" id="addDataSubmit">保存</button>
+            </div>
+        #{/form}
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $("#addData").modal('show');
+
+    var nameArray = [
+        {"name":"brandName", "msg":"请输如车牌号"}];
+    $("#dataForm").submit(function(e){
+        e.preventDefault();
+        for (var index in nameArray) {
+            var node = nameArray[index];
+            if ($("#" + node.name).val().trim().length == 0) {
+                $("#" + node.name + "_note").html(node.msg);
+                return;
+            }
+        }
+
+        //异步提交表单
+        var option = {
+            url : this.action,
+            type : 'POST',
+            dataType : 'json',
+            success : function(data) {
+                $("#addData").modal('toggle');
+                if (data == 'undefined') {
+                    balert('操作失败');
+                    return;
+                }
+                if (data.code != 0) {
+                    balert('操作失败:' + data.msg);
+                } else {
+                    balert('操作成功', function(){
+                         showContent('/StoreBrand/getBrand');
+                    });
+                }
+            },
+            error : function() {
+                balert('提交失败');
+            }
+        }
+        $('#dataForm').ajaxSubmit(option);
+        return false;
+    });
+</script>

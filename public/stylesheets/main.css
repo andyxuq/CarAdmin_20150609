@@ -1,0 +1,12 @@
+body {
+    font-family: Microsoft YaHei, Lucida Grande, Lucida Sans Unicode, Tahoma, Helvetica, Arial, Hiragino Sans GB, sans-serif;
+}
+
+form span.note_e {
+    color: red;
+    font-size: 15px;
+}
+
+table td img{
+    max-width: 30px;
+}

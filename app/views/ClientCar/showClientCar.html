@@ -1,0 +1,155 @@
+*{#{extends 'main.html'/}}*
+*{#{set title : '客户管理'/}}*
+
+<section class="content-header">
+    <h1>
+        客户用车管理
+        <small>客户用车信息统计</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">客户用车管理</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">客户用车表</h3>
+                    <div class="form-inline" style="margin-top:16px">
+                        <div class="input-group">
+                            #{form @ClientCar.showClientCar(), method:'POST', enctype :'multipart/form-data', id:'queryByName'}
+                                <input type="text" name="carNo" class="form-control input-sm pull-left" style="width: 170px;" placeholder="请输入车牌号"/>
+                                <div class="input-group-btn pull-left">
+                                    <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
+                                </div>
+                            #{/form}
+                        </div>
+                        <button type="button" class="btn btn-info" onclick="backToClient();">客户管理</button>
+                    </div>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                    <table id="clientInfoTable" class="table table-bordered">
+                        <tr>
+                            <th style="width: 25px">ID</th>
+                            <th>客户姓名</th>
+                            <th>车牌号</th>
+                            <th>型号</th>
+                            <th>车图片</th>
+                            <th>轮胎尺寸</th>
+                            <th>车架号</th>
+                            <th>购车日期</th>
+                            <th>保险承保公司</th>
+                            <th style="width: 270px">操作</th>
+                        </tr>
+                    #{list carList, as : 'car'}
+                        <tr>
+                            <td>${car.id}</td>
+                            <td>${car.client.userName}</td>
+                            <td>${car.carNo}</td>
+                            <td>${car.getCarModelName()}</td>
+                            <td><img src="${car.logo}" onmouseover="showOrignal(${car.id}, this)" onmouseout="disableOrignal(${car.id}, this);"/></td>
+                            <td>${car.tireSize}</td>
+                            <td>${car.carFrameNo}</td>
+                            <td>${car.getDateString(car.buyDate)}</td>
+                            <td>${car.insuranceCompany}</td>
+                            <td>
+                                <div class="btn-group" role="group" >
+                                    <button type="button" class="btn btn-default" onclick="addRecordInfo(${car.id});">[添加维护记录]</button>
+                                    <button type="button" class="btn btn-primary" onclick="modifyData(${car.id});">[修改]</button>
+                                    <button type="button" class="btn btn-danger" onclick="deleteData(${car.id});">[删除]</button>
+                                </div>
+                            </td>
+                        </tr>
+                    #{/list}
+                    </table>
+                </div><!-- /.box-body -->
+                <div class="box-footer clearfix">
+                    <div class="pagination pagination-sm no-margin pull-left">
+                        当前第${pageModel.currentPage}页共${pageModel.count}条记录
+                    </div>
+                    <ul class="pagination pagination-sm no-margin pull-right">
+                        <li><a href="#" onclick="showContent('/clientCar/showClientCar?page=${pageModel.currentPage - 1}')">&laquo;</a></li>
+                    #{if pageModel.totalPage !=0 }
+                        #{list 1..pageModel.totalPage, as:'pageNum'}
+                            <li><a href="#" onclick="showContent('/clientCar/showClientCar?page=${pageNum}')">${pageNum}</a></li>
+                        #{/list}
+                    #{/if}
+                        <li><a href="#" onclick="showContent('/clientCar/showClientCar?page=${pageModel.currentPage + 1}')">&raquo;</a></li>
+                    </ul>
+                </div>
+            </div><!-- /.box -->
+        </div>
+    </div>
+</section>
+<!-- 用以添加/修改对象的对话框容器 -->
+<div id="modifyTypeModal">
+
+</div>
+
+<script type="text/javascript">
+    function backToClient() {
+        showContent('/clientAction/showClient');
+    }
+
+    function addRecordInfo(carId) {
+        $.ajax({
+            url : '/clientRecord/addCarRecord?carId=' + carId,
+            method : 'GET',
+            success : function(data) {
+                $("#modifyTypeModal").html(data);
+            },
+            error : function() {
+                balert('操作失败');
+            }
+        });
+    }
+
+    function modifyData(carId) {
+        var action = #{jsAction @ClientCar.addClientCar(':carId')/};
+        $("#modifyTypeModal").load(
+                action({carId:carId}),
+                function(){}
+        )
+    }
+    function deleteData(carId) {
+        bconfirm('确定删除吗？', function(){
+            var action = #{jsAction @ClientCar.deleteClientCar(':carId')/};
+            $.get(
+                    action({carId:'' + carId}),
+                    function(data){
+                        if (data == 'undefined') {
+                            balert('操作失败');
+                            return;
+                        }
+                        if (data.code != 0) {
+                            balert('操作失败:' + data.msg);
+                        } else {
+                            balert('操作成功', function(){
+                                showContent('/clientCar/showClientCar');
+                            });
+                        }
+                    }
+            )
+        });
+    }
+    $("#queryByName").submit(function(e){
+        e.preventDefault();
+        //异步提交表单
+        var option = {
+            url : this.action,
+            type : 'POST',
+            success : function(data) {
+                $("body div.content-wrapper").html(data);
+            },
+            error : function() {
+                balert('查询失败');
+            }
+        }
+        $('#queryByName').ajaxSubmit(option);
+        return false;
+    });
+</script>

@@ -1,0 +1,126 @@
+
+<!-- 添加/修改数据对话框 -->
+<div class="modal fade" id="addData" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h2 class="modal-title" id="myModalLabel">添加客户信息</h2>
+            </div>
+        #{form @ClientManage.saveClientInfo(), method:'POST', enctype :'multipart/form-data', id:'dataForm'}
+            #{if clientInfo != null}
+                <input  type="hidden" name="clientInfo.id" value="${clientInfo.id}"/>
+            #{/if}
+            <input type="hidden" name="clientInfo.logo" value="${clientInfo?.logo}"/>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="brandName">客户名：</label>
+                    <input type="text" class="form-control" name="clientInfo.userName" id="userName" value="${clientInfo?.userName}" placeholder="请输入客户名">
+                    <span class="note_e" id="userName_note"></span>
+                </div>
+                <div class="form-group">
+                    <label for="modelName">客户电话：</label>
+                    <input type="text" class="form-control" name="clientInfo.phone"  id="phone"  value="${clientInfo?.phone}" placeholder="请输入客户手机号">
+                    <span class="note_e" id="phone_note"></span>
+                </div>
+                <div class="form-group">
+                    <label for="modelName">客户性别：</label>
+                    <select class="form-control" name="clientInfo.sex" id="sex" >
+                        #{if clientInfo == null}
+                            <option value="1">--男--</option>
+                            <option value="0">--女--</option>
+                        #{/if}
+                        #{elseif clientInfo != null && clientInfo.sex == 1}
+                            <option value="1" selected="selected">--男--</option>
+                            <option value="0">--女--</option>
+                        #{/elseif}
+                        #{elseif clientInfo != null && clientInfo.sex == 0}
+                            <option value="1">--男--</option>
+                            <option value="0" selected="selected">--女--</option>
+                        #{/elseif}
+                    </select>
+                    <span class="note_e" id="sex_note"></span>
+                </div>
+                <div class="form-group">
+                    <label for="modelName">客户年龄：</label>
+                    <input type="text" class="form-control" id="age" name="clientInfo.age" value="${clientInfo?.age}" placeholder="请输入客户年龄">
+                    <span class="note_e" id="age_note"></span>
+                </div>
+                <div class="form-group">
+                    <label for="modelName">客户住址：</label>
+                    <input type="text" class="form-control" id="address" name="clientInfo.address" value="${clientInfo?.address}" placeholder="请输入客户住址">
+                    <span class="note_e" id="address_note"></span>
+                </div>
+                <div class="form-group">
+                    <label for="modelName">客户头像：</label>
+                    <input type="file" class="form-control" id="userLogo" name="userLogo" value="">
+                    <span class="note_e" id="userLogo._note"></span>
+                </div>
+                <div class="form-group">
+                    <label for="modelName">备注：</label>
+                    <input type="text" class="form-control" id="note" name="clientInfo.note" value="${clientInfo?.note}" placeholder="请输入备注">
+                    <span class="note_e" id="note_note"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="submit" class="btn btn-primary" id="addDataSubmit">保存</button>
+            </div>
+        #{/form}
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $("#addData").modal('show');
+    var nameArray = [
+        {"name":"userName", "msg":"请输入客户名"}
+        , {"name":"phone", "msg":"请输入客户手机号"}];
+    $("#addDataSubmit").click(function(e){
+        e.preventDefault();
+        for (var index in nameArray) {
+            var node = nameArray[index];
+            if ($("#" + node.name).val().trim().length == 0) {
+                $("#" + node.name + "_note").html(node.msg);
+                return;
+            }
+        }
+
+        //异步提交表单
+        var option = {
+            url : '/clientAction/saveClient',
+            type : 'POST',
+            dataType : 'json',
+            beforeSubmit : function(data, submitForm, options) {
+                if (isNaN($("#phone").val())) {
+                    $("#phone_note").html('电话号码只能是数字');
+                    return false;
+                }
+                if ($("#age").val().trim().length != 0 && isNaN($("#age").val())) {
+                    $("#age_note").html('年龄只能是数字');
+                    return false;
+                }
+                return true;
+            },
+            success : function(data) {
+                $("#addData").modal('toggle');
+                if (data == 'undefined') {
+                    balert('操作失败');
+                    return;
+                }
+                if (data.code != 0) {
+                    balert('操作失败:' + data.msg);
+                } else {
+                    balert('操作成功', function(){
+                        showContent('/clientAction/showClient');
+                    });
+                }
+            },
+            error : function() {
+                balert('提交失败');
+            }
+        }
+        $('#dataForm').ajaxSubmit(option);
+        return false;
+    });
+</script>

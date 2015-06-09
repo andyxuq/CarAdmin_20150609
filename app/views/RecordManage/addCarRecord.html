@@ -1,0 +1,191 @@
+
+<!-- 添加/修改数据对话框 -->
+<div class="modal fade" id="addData" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                #{if null != car}
+                    <h2 class="modal-title" id="myModalLabel">[${car.carNo}]增加维修/保养记录</h2>
+                #{/if}
+                #{else }
+                    <h2 class="modal-title" id="myModalLabel">[${carRecord?.car.carNo}]增加维修/保养记录</h2>
+                #{/else}
+            </div>
+        #{form @RecordManage.saveCarRecord(), method:'POST', enctype :'multipart/form-data', id:'dataForm'}
+            #{if null != carRecord}
+                <input  type="hidden" name="carRecord.id" id="modifyFlag" value="${carRecord.id}"/>
+            #{/if}
+            #{if null == car}
+                <input type="hidden" name="carRecord.car.id" value="${carRecord.car.id}"/>
+            #{/if}
+            #{else }
+                <input type="hidden" name="carRecord.car.id" value="${car.id}"/>
+            #{/else}
+        %{
+            String userInfo = session.get("user-serssion");
+            adminFlag = userInfo.split(":~:")[2];
+        %}
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="type">类型：</label>
+                    <select class="form-control"  name="carRecord.type">
+                        #{if null == carRecord}
+                            <option value="1">--保养--</option>
+                            <option value="2">--维护--</option>
+                        #{/if}
+                        #{elseif null != carRecord && carRecord.type == 1}
+                            <option value="1" selected="selected">--保养--</option>
+                            <option value="2">--维护--</option>
+                        #{/elseif}
+                        #{elseif null!= carRecord && carRecord.type == 2}
+                            <option value="1">--保养--</option>
+                            <option value="2" selected="selected">--维护--</option>
+                        #{/elseif}
+                    </select>
+                    <span class="note_e" id="type_note"></span>
+                </div>
+
+                <div class="form-group" id="finishDate">
+                    <label for="finishDate">是否完成:</label>
+                    #{if carRecord != null && carRecord.finishDate != null}
+                        #{if carRecord.finishDate == null}
+                            <input type="checkbox"  name="finishDate" value="1"/>
+                        #{/if}
+                        #{if carRecord.finishDate != null && adminFlag == '1'}
+                            <input type="checkbox"  name="finishDate" value="1" checked />
+                        #{/if}
+                    #{/if}
+                    #{else }
+                        <input type="checkbox"  name="finishDate" value="1"/>
+                    #{/else}
+                    <span class="note_e" id="finishDate_note"></span>
+                </div>
+                <div class="form-group" id="backDate">
+                    <label for="backDate">是否交车:</label>
+                    #{if carRecord != null}
+                        #{if carRecord.backDate == null}
+                            <input type="checkbox" name="backDate" value="2"/>
+                        #{/if}
+                        #{if carRecord.backDate != null && adminFlag == '1'}
+                            <input type="checkbox" name="backDate" value="2" checked/>
+                        #{/if}
+                    #{/if}
+                    #{else }
+                        <input type="checkbox" name="backDate" value="2"/>
+                    #{/else}
+                    <span class="note_e" id="backDate_note"></span>
+                </div>
+                <div clas="form-group">
+                    <label for="requireNote">客户需求:</label>
+                    <textarea class="form-control" name="carRecord.requireNote">${carRecord?.requireNote}</textarea>
+                    <span class="note_e" id="requireNote_note"></span>
+                </div>
+                <div clas="form-group">
+                    <label for="recordNote">完成记录:</label>
+                    <textarea class="form-control" name="carRecord.recordNote">${carRecord?.recordNote}</textarea>
+                    <span class="note_e" id="recordNote_note"></span>
+                </div>
+                <div clas="form-group">
+
+                    <label for="recordNote">里程数:</label>
+                    #{if carRecord != null && carRecord.finishDate != null && adminFlag !='1'}
+                        <input type="text" class="form-control" name="carRecord.mileRecord" value="${carRecord?.mileRecord}" readonly/>
+                    #{/if}
+                    #{else }
+                        <input type="text"  class="form-control" name="carRecord.mileRecord" value="${carRecord?.mileRecord}"/>
+                    #{/else}
+                    <span class="note_e" id="mileRecord_note"></span>
+                </div>
+                <div clas="form-group">
+                    <label for="recordNote">费用:</label>
+                    #{if carRecord != null && carRecord.finishDate != null && adminFlag !='1'}
+                        <input type="text" class="form-control" name="carRecord.cost" id="cost" value="${carRecord?.cost}" readonly/>
+                    #{/if}
+                    #{else }
+                        <input class="form-control" name="carRecord.cost" id="cost" value="${carRecord?.cost}" />
+                    #{/else}
+                    <span class="note_e" id="cost_note"></span>
+                </div>
+
+                <div class=""form-group>
+                    <label for="responsible">负责人</label>
+                    <select class="form-control" name="carRecord.user.id" id="responsibleUser">
+                        #{list userList, as:'user'}
+                            #{if carRecord == null}
+                                <option value="${user.id}">${user.nickName}-${user.userName}</option>
+                            #{/if}
+                            #{else }
+                                #{if carRecord.user.id == user.id}
+                                    <option value="${user.id}" selected="selected">${user.nickName}-${user.userName}</option>
+                                #{/if}
+                                #{else }
+                                    <option value="${user.id}">${user.nickName}-${user.userName}</option>
+                                #{/else}
+                            #{/else}
+                        #{/list}
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="submit" class="btn btn-primary" id="addDataSubmit">保存</button>
+            </div>
+        #{/form}
+        </div>
+    </div>
+</div>
+%{
+    String userInfo = session.get("user-serssion");
+    adminFlag = userInfo.split(":~:")[2];
+%}
+<script type="text/javascript">
+    #{if carRecord != null && adminFlag != '1'}
+        $("#responsibleUser").hide();
+    #{/if}
+    $("#cost").focus(function(){
+        $("#cost_note").html('');
+    });
+
+    $("#addData").modal('show');
+    $("#dataForm").submit(function(e){
+        e.preventDefault();
+
+        if ($("#cost").val().trim().length != 0) {
+            if (isNaN($("#cost").val())) {
+                $("#cost_note").html('花费必须为数字');
+                return;
+            }
+        }
+        //异步提交表单
+        var option = {
+            url : this.action,
+            type : 'POST',
+            dataType : 'json',
+            success : function(data) {
+                $("#addData").modal('toggle');
+                if (data == 'undefined') {
+                    balert('操作失败');
+                    return;
+                }
+                if (data.code != 0) {
+                    balert('操作失败:' + data.msg);
+                } else {
+                    balert('操作成功', function(){
+                        #{if null == car}
+                            showContent('/clientRecord/showCarRecord');
+                        #{/if}
+                        #{else }
+                            showContent('/clientRecord/showCarRecord?carId=' + ${car.id});
+                        #{/else}
+                    });
+                }
+            },
+            error : function() {
+                balert('提交失败');
+            }
+        }
+        $('#dataForm').ajaxSubmit(option);
+        return false;
+    });
+</script>

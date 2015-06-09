@@ -1,0 +1,130 @@
+
+<!-- 添加/修改数据对话框 -->
+<div class="modal fade" id="addData" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                #{if null != user}
+                    <h2 class="modal-title" id="myModalLabel">修改[${user.nickName}]信息</h2>
+                #{/if}
+            </div>
+        #{form @AdminUser.saveUserInfo(), method:'POST', enctype :'multipart/form-data', id:'dataForm'}
+            #{if null != user}
+                <input  type="hidden" name="user.id" value="${user.id}"/>
+            #{/if}
+            <input type="hidden" name="user.logo" value="${user?.logo}"/>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="brandName">登录名：</label>
+                    <input type="text" class="form-control" name="user.userName" id="userName" value="${user?.userName}" placeholder="请输入登录名">
+                    <span class="note_e" id="userName_note"></span>
+                </div>
+                <div class="form-group">
+                    <label for="brandName">用户密码：</label>
+                    <input type="password" class="form-control" name="user.passWord" id="passWord" value="${user?.passWord}" placeholder="请输入用户密码">
+                    <span class="note_e" id="passWord_note"></span>
+                </div>
+                <div class="form-group">
+                    <label for="brandName">用户昵称：</label>
+                    <input type="text" class="form-control" name="user.nickName" id="nickName" value="${user?.nickName}" placeholder="请输入用户昵称">
+                    <span class="note_e" id="nickName_note"></span>
+                </div>
+                <div class="form-group">
+                    <label for="brandName">电话号码：</label>
+                    <input type="text" class="form-control" name="user.phone" id="phone" value="${user?.phone}" placeholder="请输入用户手机号">
+                    <span class="note_e" id="phone_note"></span>
+                </div>
+                <div class="form-group">
+                    <label for="brandName">用户年龄：</label>
+                    <input type="text" class="form-control" name="user.age" id="age" value="${user?.age}" placeholder="请输入用户年龄">
+                    <span class="note_e" id="age_note"></span>
+                </div>
+                <div class="form-group">
+                    <label for="brandName">用户性别：</label>
+                    <select class="form-control" name="user.sex" id="sex" value="${user?.age}">
+                        #{if null == user}
+                            <option value="1">--男--</option>
+                            <option value="0">--女--</option>
+                        #{/if}
+                        #{elseif null != user && user.sex == 1}
+                            <option value="1" selected="selected">--男--</option>
+                            <option value="0">--女--</option>
+                        #{/elseif}
+                        #{elseif null != user && user.sex == 0 }
+                            <option value="1">--男--</option>
+                            <option value="0" selected="selected">--女--</option>
+                        #{/elseif}
+                    </select>
+                    <span class="note_e" id="sex_note"></span>
+                </div>
+                <div class="form-group">
+                    <label for="modelName">用户头像：</label>
+                    <input type="file" class="form-control" name="userLogo"  id="userLogo"  />
+                    <span class="note_e" id="userLogo_note"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="submit" class="btn btn-primary" id="addDataSubmit">保存</button>
+            </div>
+        #{/form}
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $("#addData").modal('show');
+
+    var nameArray = [
+        {"name":"userName", "msg":"请输入登录名"}
+    ,{"name":"passWord", "msg":"请输入用户密码"}
+    ,{"name":"phone", "msg":"请输入用户手机号"}
+    ,{"name":"nickName", "msg":"请输入用户昵称"}];
+    $("#dataForm").submit(function(e){
+        e.preventDefault();
+        for (var index in nameArray) {
+            var node = nameArray[index];
+            if ($("#" + node.name).val().trim().length == 0) {
+                $("#" + node.name + "_note").html(node.msg);
+                return;
+            }
+        }
+
+        var age = $("#age").val();
+        if (age.trim().length !=0 && isNaN(age)) {
+            $("#age_note").html("年龄必须是0-100的数");
+            return;
+        }
+        if (age < 0 || age > 100) {
+            $("#age_note").html("年龄必须是0-100的数");
+            return;
+        }
+
+        //异步提交表单
+        var option = {
+            url : this.action,
+            type : 'POST',
+            dataType : 'json',
+            success : function(data) {
+                $("#addData").modal('toggle');
+                if (data == 'undefined') {
+                    balert('操作失败');
+                    return;
+                }
+                if (data.code != 0) {
+                    balert('操作失败:' + data.msg);
+                } else {
+                    balert('操作成功', function(){
+                        showContent('/adminUser/showAdminUser');
+                    });
+                }
+            },
+            error : function() {
+                balert('提交失败');
+            }
+        }
+        $('#dataForm').ajaxSubmit(option);
+        return false;
+    });
+</script>

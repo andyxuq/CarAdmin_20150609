@@ -1,0 +1,171 @@
+*{#{extends 'main.html'/}}*
+*{#{set title : '客户管理'/}}*
+
+<section class="content-header">
+    <h1>
+        系统管理员管理
+        <small>管理员人员列表</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">管理员列表</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">管理员列表</h3>
+                    <div class="form-inline" style="margin-top:16px">
+                        <div class="input-group">
+                            #{form @AdminUser.showAdminUser(), method:'POST', enctype :'multipart/form-data', id:'queryByName'}
+                                <input type="text" name="nickName" class="form-control input-sm pull-left" style="width: 170px;" placeholder="请输入用户昵称"/>
+                                <div class="input-group-btn pull-left">
+                                    <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
+                                </div>
+                            #{/form}
+                        </div>
+                        <div class="input-group">
+                        #{form @AdminUser.showAdminUser(), method:'POST', enctype :'multipart/form-data', id:'queryByPhone'}
+                            <input type="text" name="phone" class="form-control input-sm pull-left" style="width: 170px;" placeholder="请输入用户手机号查询"/>
+                            <div class="input-group-btn pull-left">
+                                <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
+                            </div>
+                        #{/form}
+                        </div>
+                        <button class="btn btn-default" id="addAdminUser" data-toggle="modal"><i class="fa fa-plus"></i>添加用户</button>
+                    </div>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                    <table id="adminUserInfoTable" class="table table-bordered">
+                        <tr>
+                            <th style="width: 25px">ID</th>
+                            <th>管理员昵称</th>
+                            <th>登陆账号</th>
+                            <th>性别</th>
+                            <th>年龄</th>
+                            <th>手机号</th>
+                            <th>头像</th>
+                            <th style="width: 200px">操作</th>
+                        </tr>
+                    #{list userList, as : 'user'}
+                        <tr>
+                            <td>${user.id}</td>
+                            <td>${user.nickName}</td>
+                            <td>${user.userName}</td>
+                            #{if user.sex == 1}
+                                <td>男</td>
+                            #{/if}
+                            #{else }
+                                <td>女</td>
+                            #{/else}
+                            <td>${user.age}</td>
+                            <td>${user.phone}</td>
+                            <td><img src="${user.logo}" onmouseover="showOrignal(${user.id}, this)" onmouseout="disableOrignal(${user.id}, this);"/></td>
+
+                            <td>
+                                <div class="btn-group" role="group" >
+                                    <button type="button" class="btn btn-primary" onclick="modifyData(${user.id});">[修改]</button>
+                                    <button type="button" class="btn btn-danger" onclick="deleteData(${user.id});">[删除]</button>
+                                </div>
+                            </td>
+                        </tr>
+                    #{/list}
+                    </table>
+                </div><!-- /.box-body -->
+                <div class="box-footer clearfix">
+                    <div class="pagination pagination-sm no-margin pull-left">
+                        当前第${pageModel.currentPage}页共${pageModel.count}条记录
+                    </div>
+                    <ul class="pagination pagination-sm no-margin pull-right">
+                        <li><a href="#" onclick="showContent('/adminUser/showAdminUser?page=${pageModel.currentPage - 1}')">&laquo;</a></li>
+                        #{if pageModel.totalPage !=0 }
+                            #{list 1..pageModel.totalPage, as:'pageNum'}
+                                <li><a href="#" onclick="showContent('/adminUser/showAdminUser?page=${pageNum}')">${pageNum}</a></li>
+                            #{/list}
+                        #{/if}
+                        <li><a href="#" onclick="showContent('/adminUser/showAdminUser?page=${pageModel.currentPage + 1}')">&raquo;</a></li>
+                    </ul>
+                </div>
+            </div><!-- /.box -->
+        </div>
+    </div>
+</section>
+<!-- 用以添加/修改对象的对话框容器 -->
+<div id="modifyTypeModal">
+
+</div>
+
+<script type="text/javascript">
+    $("#addAdminUser").click(function(){
+        var action = #{jsAction @AdminUser.addUserInfo(':userId')/};
+        $("#modifyTypeModal").load(
+                action({userId:'0'}),
+                function(){}
+        )
+    });
+
+    function modifyData(userId) {
+        var action = #{jsAction @AdminUser.addUserInfo(':userId')/};
+        $("#modifyTypeModal").load(
+            action({userId:userId}),
+            function(){}
+        )
+    }
+    function deleteData(userId) {
+        bconfirm('确定删除吗？', function(){
+            var action = #{jsAction @AdminUser.deleteUserInfo(':userId')/};
+            $.get(
+                    action({userId:'' + userId}),
+                    function(data){
+                        if (data == 'undefined') {
+                            balert('操作失败');
+                            return;
+                        }
+                        if (data.code != 0) {
+                            balert('操作失败:' + data.msg);
+                        } else {
+                            balert('操作成功', function(){
+                                showContent('/adminUser/showAdminUser');
+                            });
+                        }
+                    }
+            )
+        });
+    }
+    $("#queryByName").submit(function(e){
+        e.preventDefault();
+        //异步提交表单
+        var option = {
+            url : this.action,
+            type : 'POST',
+            success : function(data) {
+                $("body div.content-wrapper").html(data);
+            },
+            error : function() {
+                balert('查询失败');
+            }
+        }
+        $('#queryByName').ajaxSubmit(option);
+        return false;
+    });
+    $("#queryByPhone").submit(function(e){
+        e.preventDefault();
+        //异步提交表单
+        var option = {
+            url : this.action,
+            type : 'POST',
+            success : function(data) {
+                $("body div.content-wrapper").html(data);
+            },
+            error : function() {
+                balert('查询失败');
+            }
+        }
+        $('#queryByPhone').ajaxSubmit(option);
+        return false;
+    });
+</script>
