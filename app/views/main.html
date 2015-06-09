@@ -130,7 +130,7 @@
                                 #{/if}
                             </ul>
                         </li>
-                        <li class="active treeview">
+                        <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-dashboard"></i>
                                 <span>库存相关</span>
@@ -138,7 +138,8 @@
                             </a>
                             <ul class="treeview-menu">
                             #{if adminFlag == '1'}
-                                <li class="active">#{a @BrandController.getBrand()}<i class="fa fa-circle-o"></i>配件品牌管理#{/a}</li>
+                                <li class="">#{a @BrandController.getBrand()}<i class="fa fa-circle-o"></i>配件品牌管理#{/a}</li>
+                                <li class="">#{a @CategoryController.getCategory()}<i class="fa fa-circle-o"></i>配件种类管理#{/a}</li>
                             #{/if}
                             </ul>
                         </li>

@@ -3,12 +3,12 @@
 
 <section class="content-header">
     <h1>
-        品牌管理
-        <small>品牌管理</small>
+        配件种类管理
+        <small>种类管理</small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">品牌管理</li>
+        <li class="active">种类管理</li>
     </ol>
 </section>
 
@@ -18,7 +18,7 @@
         <div class="col-xs-12">
             <div class="box">
                 <div class="box-header">
-                    <h3 class="box-title">品牌信息列表</h3>
+                    <h3 class="box-title">种类信息列表</h3>
                     <div class="form-inline" style="margin-top:16px">
                         <div class="input-group">
 
@@ -26,27 +26,27 @@
                         <div class="input-group">
 
                         </div>
-                        <button class="btn btn-default" id="addClient" data-toggle="modal"><i class="fa fa-plus"></i>添加品牌</button>
+                        <button class="btn btn-default" id="addClient" data-toggle="modal"><i class="fa fa-plus"></i>添加种类</button>
                     </div>
                 </div><!-- /.box-header -->
                 <div class="box-body">
                     <table id="clientInfoTable" class="table table-bordered">
                         <tr>
                             <th style="width: 25px">ID</th>
-                            <th>品牌名称</th>
+                            <th>种类名称</th>
                             <th>添加时间</th>
 
                             <th style="width: 250px">操作</th>
                         </tr>
-                    #{list brandList, as : 'brand'}
+                    #{list categoryList, as : 'category'}
                         <tr>
-                            <td>${brand.id}</td>
-                            <td>${brand.name}</td>
-                            <td>${brand.getCreatedAt()}</td>
+                            <td>${category.id}</td>
+                            <td>${category.name}</td>
+                            <td>${category.getCreatedAt()}</td>
                             <td>
                                 <div class="btn-group" role="group" aria-label="...">
-                                    <button type="button" class="btn btn-primary" onclick="modifyData(${brand.id});">[修改]</button>
-                                    <button type="button" class="btn btn-danger"  onclick="deleteData(${brand.id});">[删除]</button>
+                                    <button type="button" class="btn btn-primary" onclick="modifyData(${category.id});">[修改]</button>
+                                    <button type="button" class="btn btn-danger"  onclick="deleteData(${category.id});">[删除]</button>
                                 </div>
                             </td>
                         </tr>
@@ -58,13 +58,13 @@
                         当前第${pageModel.currentPage}页共${pageModel.count}条记录
                     </div>
                     <ul class="pagination pagination-sm no-margin pull-right">
-                        <li><a href="#" onclick="showContent('/StoreBrand/getBrand?page=${pageModel.currentPage - 1}')">&laquo;</a></li>
+                        <li><a href="#" onclick="showContent('/StoreCategory/getCategory?page=${pageModel.currentPage - 1}')">&laquo;</a></li>
                     #{if pageModel.totalPage !=0 }
                         #{list 1..pageModel.totalPage, as:'pageNum'}
-                            <li><a href="#" onclick="showContent('/StoreBrand/getBrand?page=${pageNum}')">${pageNum}</a></li>
+                            <li><a href="#" onclick="showContent('/StoreCategory/getCategory?page=${pageNum}')">${pageNum}</a></li>
                         #{/list}
                     #{/if}
-                        <li><a href="#" onclick="showContent('/StoreBrand/getBrand?page=${pageModel.currentPage + 1}')">&raquo;</a></li>
+                        <li><a href="#" onclick="showContent('/StoreCategory/getCategory?page=${pageModel.currentPage + 1}')">&raquo;</a></li>
                     </ul>
                 </div>
             </div><!-- /.box -->
@@ -78,25 +78,25 @@
 
 <script type="text/javascript">
     $("#addClient").click(function(){
-        var action = #{jsAction @BrandController.showBrand(':brandId')/};
+        var action = #{jsAction @CategoryController.showCategory(':categoryId')/};
         $("#modifyTypeModal").load(
-                action({brandId:'0'}),
+                action({categoryId:'0'}),
                 function(){}
         )
     });
-    function modifyData(brandId) {
-        var action = #{jsAction @BrandController.showBrand(':brandId')/};
+    function modifyData(categoryId) {
+        var action = #{jsAction @CategoryController.showCategory(':categoryId')/};
         $("#modifyTypeModal").load(
-                action({brandId:brandId}),
+                action({categoryId:categoryId}),
                 function(){}
         )
     }
 
-    function deleteData(brandId) {
+    function deleteData(categoryId) {
         bconfirm('确定删除吗？', function(){
-            var action = #{jsAction @BrandController.deleteBrand(':brandId')/};
+            var action = #{jsAction @CategoryController.deleteCategory(':categoryId')/};
             $.get(
-                    action({brandId:'' + brandId}),
+                    action({categoryId:'' + categoryId}),
                     function(data){
                         if (data == 'undefined') {
                             balert('操作失败');
@@ -106,7 +106,7 @@
                             balert('操作失败:' + data.msg);
                         } else {
                             balert('操作成功', function(){
-                                showContent('/StoreBrand/getBrand');
+                                showContent('/StoreCategory/getCategory');
                             });
                         }
                     }

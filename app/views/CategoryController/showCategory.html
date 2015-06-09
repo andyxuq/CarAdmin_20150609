@@ -5,23 +5,23 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                #{if null != brand}
+                #{if null != category}
                     <h2 class="modal-title" id="myModalLabel">修改信息</h2>
                 #{/if}
                 #{else }
                     <h2 class="modal-title" id="myModalLabel">添加信息</h2>
                 #{/else}
             </div>
-        #{form @BrandController.saveBrand(), method:'POST', enctype :'multipart/form-data', id:'dataForm'}
-            #{if null != brand}
-                <input  type="hidden" name="brand.id" value="${brand.id}"/>
+        #{form @CategoryController.saveCategory(), method:'POST', enctype :'multipart/form-data', id:'dataForm'}
+            #{if null != category}
+                <input  type="hidden" name="category.id" value="${category.id}"/>
             #{/if}
 
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="brandName">品牌名：</label>
-                    <input type="text" class="form-control" name="brand.name" id="brandName" value="${brand?.name}" placeholder="请输入品牌名">
-                    <span class="note_e" id="brandName_note"></span>
+                    <label for="catName">种类名：</label>
+                    <input type="text" class="form-control" name="category.name" id="catName" value="${category?.name}" placeholder="请输入种类名">
+                    <span class="note_e" id="catName_note"></span>
                 </div>
             </div>
             <div class="modal-footer">
@@ -37,7 +37,7 @@
     $("#addData").modal('show');
 
     var nameArray = [
-        {"name":"brandName", "msg":"请输如品牌名"}];
+        {"name":"catName", "msg":"请输入分类名"}];
     $("#dataForm").submit(function(e){
         e.preventDefault();
         for (var index in nameArray) {
@@ -63,7 +63,7 @@
                     balert('操作失败:' + data.msg);
                 } else {
                     balert('操作成功', function(){
-                         showContent('/StoreBrand/getBrand');
+                         showContent('/StoreCategory/getCategory');
                     });
                 }
             },

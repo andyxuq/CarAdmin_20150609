@@ -47,5 +47,6 @@ GET     /adminUser/addAdminUser                 AdminUser.addUserInfo
 GET     /adminUser/deleteAdminUser              AdminUser.deleteUserInfo
 POST    /adminUser/saveAdminUser                AdminUser.saveUserInfo
 
-#Store Brand
+#Store
 *       /StoreBrand/{action}                    BrandController.{action}
+*       /StoreCategory/{action}                 CategoryController.{action}

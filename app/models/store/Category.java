@@ -8,12 +8,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by xuqing on 2015/6/8.
+ * Created by xuqing on 2015/6/9.
  */
 @Entity
 @org.hibernate.annotations.Entity(dynamicInsert = true, dynamicUpdate = true)
-@Table(name = "t_store_brand")
-public class Brand extends Model{
+@Table(name = "t_store_category")
+public class Category extends Model {
 
     public String name;
 
