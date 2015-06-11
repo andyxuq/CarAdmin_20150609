@@ -1,0 +1,205 @@
+*{#{extends 'main.html'/}}*
+*{#{set title : '后台管理系统'/}}*
+
+<section class="content-header">
+    <h1>
+        配件管理
+        <small>配件管理</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">配件管理</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">配件信息列表</h3>
+                    <div class="form-inline" style="margin-top:16px">
+                        <div class="input-group">
+                            #{form @ResourceController.getResources(), method:'POST', enctype :'multipart/form-data', id:'queryByBrand'}
+                                <select name="brandId" class="form-control input-sm pull-left" >
+                                    <option value="">不限</option>
+                                    #{list items:brandList, as:'brand'}
+                                        <option value="${brand.id}">${brand.name}</option>
+                                    #{/list}
+                                </select>
+                                <div class="input-group-btn pull-left">
+                                    <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
+                                </div>
+                            #{/form}
+                        </div>
+                        <div class="input-group">
+                            #{form @ResourceController.getResources(), method:'POST', enctype :'multipart/form-data', id:'queryByCategory'}
+                                <select name="categoryId" class="form-control input-sm pull-left" >
+                                    <option value="">不限</option>
+                                    #{list items:categoryList, as:'category'}
+                                        <option value="${category.id}">${category.name}</option>
+                                    #{/list}
+                                </select>
+                                <div class="input-group-btn pull-left">
+                                    <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
+                                </div>
+                            #{/form}
+                        </div>
+                        <div class="input-group">
+                            #{form @ResourceController.getResources(), method:'POST', enctype :'multipart/form-data', id:'queryByType'}
+                                <input type="text" name="type" class="form-control input-sm pull-left" placeholder="请输入型号查询"/>
+                                <div class="input-group-btn pull-left">
+                                    <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
+                                </div>
+                            #{/form}
+                        </div>
+                        <button class="btn btn-default" id="addClient" data-toggle="modal"><i class="fa fa-plus"></i>添加配件</button>
+                    </div>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                    <table id="clientInfoTable" class="table table-bordered">
+                        <tr>
+                            <th style="width: 25px">ID</th>
+                            <th>品牌</th>
+                            <th>种类</th>
+                            <th>型号</th>
+                            <th>规格</th>
+                            <th>单位</th>
+                            <th>数量</th>
+                            <th>成本价</th>
+                            <th>销售价</th>
+
+                            <th style="width: 250px">操作</th>
+                        </tr>
+                    #{list resourceList, as : 'res'}
+                        <tr>
+                            <td>${res.id}</td>
+                            <td>${res.brand.name}</td>
+                            <td>${res.category.name}</td>
+                            <td>${res.type}</td>
+                            <td>${res.spec}</td>
+                            <td>${res.unit}</td>
+                            <td>${res.totalCount}</td>
+                            <td>${res.costPrice}</td>
+                            <td>${res.salesPrice}</td>
+                            <td>
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <button type="button" class="btn btn-primary" onclick="modifyData(${res.id});">[修改]</button>
+                                    <button type="button" class="btn btn-danger"  onclick="deleteData(${res.id});">[删除]</button>
+                                </div>
+                            </td>
+                        </tr>
+                    #{/list}
+                    </table>
+                </div><!-- /.box-body -->
+                <div class="box-footer clearfix">
+                    <div class="pagination pagination-sm no-margin pull-left">
+                        当前第${pageModel.currentPage}页共${pageModel.count}条记录
+                    </div>
+                    <ul class="pagination pagination-sm no-margin pull-right">
+                        <li><a href="#" onclick="showContent('/ResourceController/getResources?page=${pageModel.currentPage - 1}')">&laquo;</a></li>
+                    #{if pageModel.totalPage !=0 }
+                        #{list 1..pageModel.totalPage, as:'pageNum'}
+                            <li><a href="#" onclick="showContent('/ResourceController/getResources?page=${pageNum}')">${pageNum}</a></li>
+                        #{/list}
+                    #{/if}
+                        <li><a href="#" onclick="showContent('/ResourceController/getResources?page=${pageModel.currentPage + 1}')">&raquo;</a></li>
+                    </ul>
+                </div>
+            </div><!-- /.box -->
+        </div>
+    </div>
+</section>
+<!-- 用以添加/修改对象的对话框容器 -->
+<div id="modifyTypeModal">
+
+</div>
+
+<script type="text/javascript">
+    $("#addClient").click(function(){
+        var action = #{jsAction @ResourceController.showResource(':resourceId')/};
+        $("#modifyTypeModal").load(
+                action({resourceId:'0'}),
+                function(){}
+        )
+    });
+    function modifyData(resourceId) {
+        var action = #{jsAction @ResourceController.showResource(':resourceId')/};
+        $("#modifyTypeModal").load(
+                action({resourceId:resourceId}),
+                function(){}
+        )
+    }
+
+    function deleteData(resourceId) {
+        bconfirm('确定删除吗？', function(){
+            var action = #{jsAction @ResourceController.deleteResource(':resourceId')/};
+            $.get(
+                    action({resourceId:'' + resourceId}),
+                    function(data){
+                        if (data == 'undefined') {
+                            balert('操作失败');
+                            return;
+                        }
+                        if (data.code != 0) {
+                            balert('操作失败:' + data.msg);
+                        } else {
+                            balert('操作成功', function(){
+                                showContent('/ResourceController/getResources');
+                            });
+                        }
+                    }
+            )
+        });
+    }
+
+    $("#queryByBrand").submit(function(e){
+        e.preventDefault();
+        //异步提交表单
+        var option = {
+            url : this.action,
+            type : 'POST',
+            success : function(data) {
+                $("body div.content-wrapper").html(data);
+            },
+            error : function() {
+                balert('查询失败');
+            }
+        }
+        $('#queryByBrand').ajaxSubmit(option);
+        return false;
+    });
+    $("#queryByCategory").submit(function(e){
+        e.preventDefault();
+        //异步提交表单
+        var option = {
+            url : this.action,
+            type : 'POST',
+            success : function(data) {
+                $("body div.content-wrapper").html(data);
+            },
+            error : function() {
+                balert('查询失败');
+            }
+        }
+        $('#queryByCategory').ajaxSubmit(option);
+        return false;
+    });
+    $("#queryByType").submit(function(e){
+        e.preventDefault();
+        //异步提交表单
+        var option = {
+            url : this.action,
+            type : 'POST',
+            success : function(data) {
+                $("body div.content-wrapper").html(data);
+            },
+            error : function() {
+                balert('查询失败');
+            }
+        }
+        $('#queryByType').ajaxSubmit(option);
+        return false;
+    });
+</script>

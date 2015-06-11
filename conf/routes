@@ -50,3 +50,4 @@ POST    /adminUser/saveAdminUser                AdminUser.saveUserInfo
 #Store
 *       /StoreBrand/{action}                    BrandController.{action}
 *       /StoreCategory/{action}                 CategoryController.{action}
+*       /{controller}/{action}                  {controller}.{action}

@@ -2,10 +2,7 @@ package models.store;
 
 import play.db.jpa.Model;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * Created by xuqing on 2015/6/10.

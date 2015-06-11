@@ -4,6 +4,7 @@ import models.store.Brand;
 import models.store.Category;
 import models.store.Resource;
 import models.utils.PageModel;
+import models.utils.Response;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import play.db.jpa.JPABase;
@@ -42,11 +43,11 @@ public class ResourceController extends Controller{
         List<Brand> brandList = Brand.findAll();
         List<Category> categoryList = Category.findAll();
         if (query.length() > 0) {
-            query.substring(0, query.lastIndexOf("and"));
-            int count = (int) Resource.count(query.toString(), args.toArray());
-            query.append(" order by id desc");
+            String sql = query.substring(0, query.lastIndexOf("and"));
+            int count = (int) Resource.count(sql, args.toArray());
+            sql += " order by id desc";
             PageModel pageModel = new PageModel(count, page);
-            List<Object> resourceList = Resource.find(query.toString(), args.toArray()).fetch(pageModel.getCurrentPage(), PageModel.DEFAULT_PAGES);
+            List<Object> resourceList = Resource.find(sql, args.toArray()).fetch(pageModel.getCurrentPage(), PageModel.DEFAULT_PAGES);
 
             render(resourceList, pageModel, brandList, categoryList);
         } else {
@@ -57,6 +58,24 @@ public class ResourceController extends Controller{
 
             render(resourceList, pageModel, brandList, categoryList);
         }
+    }
 
+    public static void showResource(long resourceId) {
+        Resource resource = Resource.findById(resourceId);
+
+        List<Brand> brandList = Brand.findAll();
+        List<Category> categoryList = Category.findAll();
+        render(resource, brandList, categoryList);
+    }
+
+    public static void deleteResource(long resourceId) {
+        Resource resource = Resource.findById(resourceId);
+        resource.delete();
+        renderJSON(new Response());
+    }
+
+    public static void saveResource(Resource resource) {
+        resource.save();
+        renderJSON(new Response());
     }
 }
