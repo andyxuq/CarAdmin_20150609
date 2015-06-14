@@ -4,10 +4,12 @@ import controllers.Application;
 import models.utils.PageModel;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import play.Play;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -38,6 +40,18 @@ public class ToolUtils {
         } else {
             return "";
         }
+    }
+
+    public static String mul(String price, int num) {
+        double doublePrice = NumberUtils.toDouble(price);
+        return mul(doublePrice, num);
+    }
+
+    public static String mul(double doublePrice, int num) {
+        BigDecimal bigDecimal = new BigDecimal(doublePrice);
+        BigDecimal totalNum = new BigDecimal(num);
+
+        return String.valueOf(bigDecimal.multiply(totalNum));
     }
 
     /**
