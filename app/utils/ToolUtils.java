@@ -48,8 +48,8 @@ public class ToolUtils {
     }
 
     public static String mul(double doublePrice, int num) {
-        BigDecimal bigDecimal = new BigDecimal(doublePrice);
-        BigDecimal totalNum = new BigDecimal(num);
+        BigDecimal bigDecimal = new BigDecimal(Double.toString(doublePrice));
+        BigDecimal totalNum = new BigDecimal(Double.toString(num));
 
         return String.valueOf(bigDecimal.multiply(totalNum));
     }

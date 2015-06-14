@@ -45,12 +45,12 @@ public class Car extends Model {
         return "[" + modelType.getBrandName() + "]" + modelType.name;
     }
 
-    public String getDateString(Date date) {
-        if (null == date) {
+    public String getDateString() {
+        if (null == buyDate) {
             return "";
         } else {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            return format.format(date);
+            return format.format(buyDate);
         }
     }
 }

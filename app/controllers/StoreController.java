@@ -76,6 +76,9 @@ public class StoreController extends Application {
             store.totalPrice = ToolUtils.mul(store.costPrice, store.count);
         }
         store.save();
+
+        store.resource.totalCount = store.resource.totalCount + store.count;
+        store.resource.save();
         renderJSON(new Response());
     }
 }
