@@ -1,0 +1,184 @@
+*{#{extends 'main.html'/}}*
+*{#{set title : '后台管理系统'/}}*
+
+<section class="content-header">
+    <h1>
+        维修耗材管理
+        <small>维修耗材管理</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">维修耗材管理</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">维修耗材列表</h3>
+                    <div class="form-inline" style="margin-top:16px">
+                        <div class="input-group">
+                            #{form @StoreRecordController.getResources(), method:'POST', enctype :'multipart/form-data', id:'queryByRecord'}
+                                <input type="text" class="form-control input-sm pull-left" name="carNo" placeholder="请输入车牌号">
+                                <div class="input-group-btn pull-left">
+                                    <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
+                                </div>
+                            #{/form}
+                        </div>
+                        <div class="input-group">
+                            #{form @StoreRecordController.getResources(), method:'POST', enctype :'multipart/form-data', id:'queryByResource'}
+                                <select name="resourceId" class="form-control input-sm pull-left" >
+                                    <option value="">不限</option>
+                                    #{list items:resourceList, as:'resource'}
+                                        <option value="${resource.id}">${resource.brand.name}->${resource.category.name}->${resource.type}</option>
+                                    #{/list}
+                                </select>
+                                <div class="input-group-btn pull-left">
+                                    <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
+                                </div>
+                            #{/form}
+                        </div>
+                        *{<button class="btn btn-default" id="addClient" data-toggle="modal"><i class="fa fa-plus"></i>添加配件</button>}*
+                    </div>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                    <table id="clientInfoTable" class="table table-bordered">
+                        <tr>
+                            <th style="width: 25px">ID</th>
+                            <th>客户姓名</th>
+                            <th>车牌号</th>
+                            <th>是否完成</th>
+                            <th>是否交车</th>
+                            <th>使用时间</th>
+                            <th>材料名</th>
+                            <th>规格</th>
+                            <th>数量</th>
+                            <th>收费</th>
+                            <th style="width: 250px">操作</th>
+                        </tr>
+                    #{list recordList, as : 'res'}
+                        <tr>
+                            <td>${res.id}</td>
+                            <td>${res.carRecord.car.client.userName}</td>
+                            <td>${res.carRecord.car.carNo}</td>
+                            <td>
+                                #{if res.carRecord.finishDate != null}
+                                    <span class="badge bg-green">是</span>
+                                #{/if}
+                                #{else }
+                                    <span class="badge bg-red">否</span>
+                                #{/else}
+                            </td>
+                            <td>
+                                #{if res.carRecord.backDate != null}
+                                    <span class="badge bg-green">是</span>
+                                #{/if}
+                                #{else }
+                                    <span class="badge bg-red">否</span>
+                                #{/else}
+                            </td>
+                            <td>${res.getCreatedString()}</td>
+                            <td>${res.resource.brand.name}->${res.resource.category.name}->${res.resource.type}</td>
+                            <td>${res.resource.spec}</td>
+                            <td>${res.resourceNum}</td>
+                            <td>${res.salesPrice}</td>
+                            <td>
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <button type="button" class="btn btn-primary" onclick="modifyData(${res.id});">[修改]</button>
+                                    <button type="button" class="btn btn-danger"  onclick="deleteData(${res.id});">[删除]</button>
+                                </div>
+                            </td>
+                        </tr>
+                    #{/list}
+                    </table>
+                </div><!-- /.box-body -->
+                <div class="box-footer clearfix">
+                    <div class="pagination pagination-sm no-margin pull-left">
+                        当前第${pageModel.currentPage}页共${pageModel.count}条记录
+                    </div>
+                    <ul class="pagination pagination-sm no-margin pull-right">
+                        <li><a href="#" onclick="showContent('/StoreRecordController/getResources?page=${pageModel.currentPage - 1}')">&laquo;</a></li>
+                    #{if pageModel.totalPage !=0 }
+                        #{list 1..pageModel.totalPage, as:'pageNum'}
+                            <li><a href="#" onclick="showContent('/StoreRecordController/getResources?page=${pageNum}')">${pageNum}</a></li>
+                        #{/list}
+                    #{/if}
+                        <li><a href="#" onclick="showContent('/StoreRecordController/getResources?page=${pageModel.currentPage + 1}')">&raquo;</a></li>
+                    </ul>
+                </div>
+            </div><!-- /.box -->
+        </div>
+    </div>
+</section>
+<!-- 用以添加/修改对象的对话框容器 -->
+<div id="modifyTypeModal">
+
+</div>
+
+<script type="text/javascript">
+    function modifyData(resourceId) {
+        var action = #{jsAction @StoreRecordController.showResource(':resourceId')/};
+        $("#modifyTypeModal").load(
+                action({resourceId:resourceId}),
+                function(){}
+        )
+    }
+
+    function deleteData(resourceId) {
+        bconfirm('确定删除吗？', function(){
+            var action = #{jsAction @StoreRecordController.deleteResource(':resourceId')/};
+            $.get(
+                    action({resourceId:'' + resourceId}),
+                    function(data){
+                        if (data == 'undefined') {
+                            balert('操作失败');
+                            return;
+                        }
+                        if (data.code != 0) {
+                            balert('操作失败:' + data.msg);
+                        } else {
+                            balert('操作成功', function(){
+                                showContent('/StoreRecordController/getResources');
+                            });
+                        }
+                    }
+            )
+        });
+    }
+
+    $("#queryByRecord").submit(function(e){
+        e.preventDefault();
+        //异步提交表单
+        var option = {
+            url : this.action,
+            type : 'POST',
+            success : function(data) {
+                $("body div.content-wrapper").html(data);
+            },
+            error : function() {
+                balert('查询失败');
+            }
+        }
+        $('#queryByRecord').ajaxSubmit(option);
+        return false;
+    });
+    $("#queryByResource").submit(function(e){
+        e.preventDefault();
+        //异步提交表单
+        var option = {
+            url : this.action,
+            type : 'POST',
+            success : function(data) {
+                $("body div.content-wrapper").html(data);
+            },
+            error : function() {
+                balert('查询失败');
+            }
+        }
+        $('#queryByResource').ajaxSubmit(option);
+        return false;
+    });
+</script>

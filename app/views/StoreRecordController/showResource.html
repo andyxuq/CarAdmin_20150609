@@ -1,0 +1,131 @@
+
+<!-- 添加/修改数据对话框 -->
+<div class="modal fade" id="addData" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                #{if null != resource}
+                    <h2 class="modal-title" id="myModalLabel">修改信息</h2>
+                #{/if}
+                #{else }
+                    <h2 class="modal-title" id="myModalLabel">添加信息</h2>
+                #{/else}
+            </div>
+        #{form @StoreRecordController.saveResource(), method:'POST', enctype :'multipart/form-data', id:'dataForm'}
+            #{if null != resource}
+                <input  type="hidden" name="resource.id" value="${resource.id}"/>
+            #{/if}
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="brandName">维修记录编号：</label>
+                    #{if null == resource}
+                        <input type="text" class="form-control" name="resource.carRecord.id" id="carRecordId" readonly value="${carRecord.id}" placeholder="请输入维修记录编号"
+                    #{/if}
+                    #{else }
+                        <input type="text" class="form-control" name="resource.carRecord.id" id="carRecordId" readonly value="${resource.carRecord.id}" placeholder="请输入维修记录编号"
+                    #{/else}
+                    <span class="note_e" id="carRecordId_note"></span>
+                </div>
+                <div class="form-group">
+                    <label for="brandName">配件选择：</label>
+                    <select class="form-control" name="resource.resource.id" id = "resBrand" >
+                        #{list items:resourceList, as:'res'}
+                            #{if resource != null && resource.resource.id == res.id}
+                                <option value="${res.id}" selected = "selected" onfocus="this.defaultIndex=this.selectedIndex;" onchange="this.selectedIndex=this.defaultIndex;">
+                                    ${res.brand.name}->${res.category.name}->${res.type}
+                                </option>
+                            #{/if}
+                            #{else }
+                                <option value="${res.id}" >${res.brand.name}->${res.category.name}->${res.type}</option>
+                            #{/else}
+                        #{/list}
+                    </select>
+                    <span class="note_e" id="resCategory_note"></span>
+                </div>
+                <div class="form-group">
+                    <label for="brandName">使用时间：</label>
+                    <input type="text" class="form-control" name="resource.createdAt" id="createdAt" value="${resource?.getCreatedString()}" placeholder="请选择使用时间">
+                    <span class="note_e" id="createdAt_note"></span>
+                </div>
+                <div class="form-group">
+                    <label for="brandName">使用数量：</label>
+                    <input type="text" class="form-control" name="resource.resourceNum" id="resourceNum" value="${resource?.resourceNum}" placeholder="请输入配件使用数量">
+                    <span class="note_e" id="resourceNum_note"></span>
+                </div>
+                <div class="form-group">
+                    <label for="brandName">收费：</label>
+                    <input type="text" class="form-control" name="resource.salesPrice" id="salesPrice" value="${resource?.salesPrice}" placeholder="请输入收费价格，若不输入则根据配件销售价格与使用数量自动计算">
+                    <span class="note_e" id="salesPrice_note"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="submit" class="btn btn-primary" id="addDataSubmit">保存</button>
+            </div>
+        #{/form}
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $("#addData").modal('show');
+
+    $('#createdAt').datepicker({
+        format: "yyyy-mm-dd",
+        language: "zh-CN"
+    }).click(function(){
+        $(this).datepicker('show');
+        $(".datepicker").css("z-index", '999999');
+        $(".datepicker").click(function(){
+            $(".datepicker").css("z-index", '999999');
+        });
+    });
+
+    var nameArray = [
+        {"name":"createdAt", "msg":"请选择使用时间"},
+        {"name":"resourceNum", "msg":"请输入配件使用数量"}
+    ];
+    $("#dataForm").submit(function(e){
+        e.preventDefault();
+        for (var index in nameArray) {
+            var node = nameArray[index];
+            if ($("#" + node.name).val().trim().length == 0) {
+                $("#" + node.name + "_note").html(node.msg);
+                return;
+            }
+        }
+
+        if (isNaN($("#resourceNum").val())) {
+            $("#resourceNum_note").html('配件数量必须为数字');
+            return;
+        }
+
+        //异步提交表单
+        var option = {
+            url : this.action,
+            type : 'POST',
+            dataType : 'json',
+            success : function(data) {
+                $("#addData").modal('toggle');
+                if (data == 'undefined') {
+                    balert('操作失败');
+                    return;
+                }
+                if (data.code != 0) {
+                    balert('操作失败:' + data.msg);
+                } else {
+                    balert('操作成功', function(){
+                         showContent('/StoreRecordController/getResources');
+                    });
+                }
+            },
+            error : function() {
+                balert('提交失败');
+            }
+        }
+        $('#dataForm').ajaxSubmit(option);
+        return false;
+    });
+</script>

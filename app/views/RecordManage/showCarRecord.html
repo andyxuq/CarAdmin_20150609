@@ -53,7 +53,7 @@
                             <th>责任人</th>
                             <th>里程数</th>
                             <th>费用</th>
-                            <th style="width: 150px">操作</th>
+                            <th style="width: 250px">操作</th>
                         </tr>
                     #{list recordList, as : 'record'}
                         <tr>
@@ -97,6 +97,7 @@
                             </td>
                             <td>
                                 <div class="btn-group" role="group" >
+                                    <button type="button" class="btn btn-default" onclick="addRecordInfo(${record.id});">[使用材料]</button>
                                     <button type="button" class="btn btn-primary" onclick="modifyData(${record.id});">[修改]</button>
                                     <button type="button" class="btn btn-danger" onclick="deleteData(${record.id});">[删除]</button>
                                 </div>
@@ -129,6 +130,19 @@
 </div>
 
 <script type="text/javascript">
+    function addRecordInfo(recordId) {
+        $.ajax({
+            url : '/StoreRecordController/showResource?recordId=' + recordId,
+            method : 'GET',
+            success : function(data) {
+                $("#modifyTypeModal").html(data);
+            },
+            error : function() {
+                balert('操作失败');
+            }
+        });
+    }
+
     function backToCar() {
         showContent('/clientCar/showClientCar');
     }

@@ -132,7 +132,7 @@
                         </li>
                         <li class="treeview">
                             <a href="#">
-                                <i class="fa fa-dashboard"></i>
+                                <i class="fa fa-database"></i>
                                 <span>库存相关</span>
                                 <i class="fa fa-angle-left pull-right"></i>
                             </a>
@@ -157,6 +157,16 @@
                                 <li>#{a @ClientCar.showClientCar()}<i class="fa fa-circle-o"></i>客户用车管理#{/a}</li>
                                 <li>#{a @RecordManage.showCarRecord()}<i class="fa fa-circle-o"></i>维护记录管理#{/a}</li>
                                 <li>#{a @ClientManage.showCarType()}<i class="fa fa-circle-o"></i>汽车品牌管理#{/a}</li>
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-database"></i>
+                                <span>库存管理</span>
+                                <span class="label label-primary pull-right">1</span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li>#{a @StoreRecordController.getResources()}<i class="fa fa-circle-o"></i>配件使用管理#{/a}</li>
                             </ul>
                         </li>
                     </ul>
