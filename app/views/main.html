@@ -140,8 +140,7 @@
                             #{if adminFlag == '1'}
                                 <li class="">#{a @BrandController.getBrand()}<i class="fa fa-circle-o"></i>配件品牌管理#{/a}</li>
                                 <li class="">#{a @CategoryController.getCategory()}<i class="fa fa-circle-o"></i>配件种类管理#{/a}</li>
-                                <li class="">#{a @ResourceController.getResources()}<i class="fa fa-circle-o"></i>配件管理#{/a}</li>
-                                <li class="">#{a @StoreController.getResources()}<i class="fa fa-circle-o"></i>库存管理#{/a}</li>
+                                <li class="">#{a @StoreController.getResources()}<i class="fa fa-circle-o"></i>进货单#{/a}</li>
                             #{/if}
                             </ul>
                         </li>
@@ -166,7 +165,8 @@
                                 <span class="label label-primary pull-right">1</span>
                             </a>
                             <ul class="treeview-menu">
-                                <li>#{a @StoreRecordController.getResources()}<i class="fa fa-circle-o"></i>配件使用管理#{/a}</li>
+                                <li>#{a @ResourceController.getResources()}<i class="fa fa-circle-o"></i>库存查看#{/a}</li>
+                                <li>#{a @StoreRecordController.getResources()}<i class="fa fa-circle-o"></i>配件使用情况#{/a}</li>
                             </ul>
                         </li>
                     </ul>

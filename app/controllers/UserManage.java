@@ -49,6 +49,6 @@ public class UserManage extends Application {
     public static void doLoginOut() {
         session.remove(SESSION_USER_KEY);
 //        renderTemplate();
-        redirect("/");
+        redirect("/?out=1");
     }
 }

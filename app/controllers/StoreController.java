@@ -68,6 +68,12 @@ public class StoreController extends Application {
     public static void deleteResource(long resourceId) {
         ResourceStore resource = ResourceStore.findById(resourceId);
         resource.delete();
+
+        resource.resource.totalCount = resource.resource.totalCount - resource.count;
+        if (resource.resource.totalCount < 0) {
+            resource.resource.totalCount = 0;
+        }
+        resource.resource.save();
         renderJSON(new Response());
     }
 
@@ -75,10 +81,15 @@ public class StoreController extends Application {
         if (StringUtils.isBlank(store.totalPrice)) {
             store.totalPrice = ToolUtils.mul(store.costPrice, store.count);
         }
+        if (store.id == null) {
+            store.resource.totalCount = store.resource.totalCount + store.count;
+            store.resource.costPrice = store.costPrice;
+            store.resource.save();
+        } else {
+            store.resource.costPrice = store.costPrice;
+            store.resource.save();
+        }
         store.save();
-
-        store.resource.totalCount = store.resource.totalCount + store.count;
-        store.resource.save();
         renderJSON(new Response());
     }
 }

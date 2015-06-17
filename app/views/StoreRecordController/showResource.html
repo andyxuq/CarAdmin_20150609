@@ -51,7 +51,12 @@
                 </div>
                 <div class="form-group">
                     <label for="brandName">使用数量：</label>
-                    <input type="text" class="form-control" name="resource.resourceNum" id="resourceNum" value="${resource?.resourceNum}" placeholder="请输入配件使用数量">
+                    #{if null != resource}
+                        <input type="text" class="form-control" name="resource.resourceNum" id="resourceNum" value="${resource.resourceNum}" readonly placeholder="请输入配件使用数量">
+                    #{/if}
+                    #{else }
+                        <input type="text" class="form-control" name="resource.resourceNum" id="resourceNum" value="" placeholder="请输入配件使用数量">
+                    #{/else}
                     <span class="note_e" id="resourceNum_note"></span>
                 </div>
                 <div class="form-group">

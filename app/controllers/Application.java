@@ -61,6 +61,9 @@ public class Application extends Controller {
         }
 
         String cookieVal = getCookieVal(request, COOKIE_USER_KEY);
+        if (StringUtils.isNotBlank(params.get("out"))) {
+            cookieVal = "";
+        }
         if (StringUtils.isNotBlank(cookieVal)) {
             User userInfo = getUserFromSession(cookieVal);
 

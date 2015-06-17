@@ -96,10 +96,15 @@ public class StoreRecordController extends Application {
         if (StringUtils.isBlank(resource.salesPrice)) {
             resource.salesPrice = ToolUtils.mul(resource.resource.salesPrice, resource.resourceNum);
         }
-        if (resource.resourceNum > resource.resource.totalCount) {
-            renderJSON(new Response(1, "配件库存不足，总库存:" + resource.resource.totalCount));
-        }
 
+        if (resource.id == null) {
+            if (resource.resourceNum > resource.resource.totalCount) {
+                renderJSON(new Response(1, "配件库存不足，总库存:" + resource.resource.totalCount));
+            }
+
+            resource.resource.totalCount = resource.resource.totalCount - resource.resourceNum;
+            resource.resource.save();
+        }
         resource.save();
         renderJSON(new Response());
     }

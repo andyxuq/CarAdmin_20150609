@@ -11,7 +11,10 @@
         <li class="active">配件管理</li>
     </ol>
 </section>
-
+%{
+    String userInfo = session.get("user-serssion");
+    adminFlag = userInfo.split(":~:")[2];
+%}
 <!-- Main content -->
 <section class="content">
     <div class="row">
@@ -67,7 +70,7 @@
                             <th>规格</th>
                             <th>单位</th>
                             <th>数量</th>
-                            *{<th>成本价</th>}*
+                            <th>成本价</th>
                             <th>销售价</th>
 
                             <th style="width: 250px">操作</th>
@@ -81,12 +84,14 @@
                             <td>${res.spec}</td>
                             <td>${res.unit}</td>
                             <td>${res.totalCount}</td>
-                            *{<td>${res.costPrice}</td>}*
+                            <td>${res.costPrice}</td>
                             <td>${res.salesPrice}</td>
                             <td>
                                 <div class="btn-group" role="group" aria-label="...">
+                                #{if adminFlag == '1'}
                                     <button type="button" class="btn btn-primary" onclick="modifyData(${res.id});">[修改]</button>
                                     <button type="button" class="btn btn-danger"  onclick="deleteData(${res.id});">[删除]</button>
+                                #{/if}
                                 </div>
                             </td>
                         </tr>
