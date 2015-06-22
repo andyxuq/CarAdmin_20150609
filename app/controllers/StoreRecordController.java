@@ -57,6 +57,9 @@ public class StoreRecordController extends Application {
             int count = (int) StoreRecord.count(sql, args.toArray());
             sql += " order by id desc";
             PageModel pageModel = new PageModel(count, page);
+            pageModel.putSearch("resourceId", resourceId);
+            pageModel.putSearch("carNum", carNum);
+
             List<Object> recordList = StoreRecord.find(sql, args.toArray()).fetch(pageModel.getCurrentPage(), PageModel.DEFAULT_PAGES);
 
             render(recordList, pageModel, resourceList);

@@ -78,7 +78,8 @@
                     <div class="form-inline" style="margin-top:16px">
                         <div class="input-group">
                             #{form @ClientManage.showClientInfo(), method:'POST', enctype :'multipart/form-data', id:'queryByName'}
-                                <input type="text" name="clientName" class="form-control input-sm pull-left" style="width: 170px;" placeholder="请输入客户名"/>
+                                <input type="text" name="clientName" class="form-control input-sm pull-left"
+                                      value="${pageModel?.getSearchValue('clientName')}" style="width: 170px;" placeholder="请输入客户名"/>
                                 <div class="input-group-btn pull-left">
                                     <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
                                 </div>
@@ -86,7 +87,8 @@
                         </div>
                         <div class="input-group">
                             #{form @ClientManage.showClientInfo(), method:'POST', enctype :'multipart/form-data', id:'queryByPhone'}
-                                <input type="text" name="clientPhone" class="form-control input-sm pull-left" style="width: 170px;" placeholder="请输入电话号码"/>
+                                <input type="text" name="clientPhone" class="form-control input-sm pull-left"
+                                       value="${pageModel?.getSearchValue('clientPhone')}"  style="width: 170px;" placeholder="请输入电话号码"/>
                                 <div class="input-group-btn pull-left">
                                     <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
                                 </div>
@@ -132,13 +134,13 @@
                         当前第${pageModel.currentPage}页共${pageModel.count}条记录
                     </div>
                     <ul class="pagination pagination-sm no-margin pull-right">
-                        <li><a href="#" onclick="showContent('/clientAction/showClient?page=${pageModel.currentPage - 1}&finished=${pageModel.finished == 1 ? 1 : ''}&processing=${pageModel.process == 1 ? 1 : ''}')">&laquo;</a></li>
+                        <li><a href="#" onclick="showContent('/clientAction/showClient?page=${pageModel.currentPage - 1}${pageModel.getSearch()}&finished=${pageModel.finished == 1 ? 1 : ''}&processing=${pageModel.process == 1 ? 1 : ''}')">&laquo;</a></li>
                         #{if pageModel.totalPage !=0 }
                             #{list 1..pageModel.totalPage, as:'pageNum'}
-                                <li><a href="#" onclick="showContent('/clientAction/showClient?page=${pageNum}&finished=${pageModel.finished == 1 ? 1 : ''}&processing=${pageModel.process == 1 ? 1 : ''}')">${pageNum}</a></li>
+                                <li><a href="#" onclick="showContent('/clientAction/showClient?page=${pageNum}${pageModel.getSearch()}&finished=${pageModel.finished == 1 ? 1 : ''}&processing=${pageModel.process == 1 ? 1 : ''}')">${pageNum}</a></li>
                             #{/list}
                         #{/if}
-                        <li><a href="#" onclick="showContent('/clientAction/showClient?page=${pageModel.currentPage + 1}&finished=${pageModel.finished == 1 ? 1 : ''}&processing=${pageModel.process == 1 ? 1 : ''}')">&raquo;</a></li>
+                        <li><a href="#" onclick="showContent('/clientAction/showClient?page=${pageModel.currentPage + 1}${pageModel.getSearch()}&finished=${pageModel.finished == 1 ? 1 : ''}&processing=${pageModel.process == 1 ? 1 : ''}')">&raquo;</a></li>
                     </ul>
                 </div>
             </div><!-- /.box -->

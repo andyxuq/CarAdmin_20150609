@@ -47,6 +47,10 @@ public class ResourceController extends Controller{
             int count = (int) Resource.count(sql, args.toArray());
             sql += " order by id desc";
             PageModel pageModel = new PageModel(count, page);
+            pageModel.putSearch("categoryId", categoryId + "");
+            pageModel.putSearch("brandId", brandId + "");
+            pageModel.putSearch("type", type);
+
             List<Object> resourceList = Resource.find(sql, args.toArray()).fetch(pageModel.getCurrentPage(), PageModel.DEFAULT_PAGES);
 
             render(resourceList, pageModel, brandList, categoryList);

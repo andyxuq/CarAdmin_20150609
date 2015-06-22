@@ -1,5 +1,8 @@
 package models.utils;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
+import play.Play;
 import play.db.Model;
 
 import java.util.HashMap;
@@ -43,14 +46,20 @@ public class PageModel {
         if (null == search) {
             search = new HashMap<String, String>();
         }
-        search.put(key, value);
+        if (StringUtils.isNotBlank(value)) {
+            search.put(key, value);
+        }
     }
 
     public String getSearchValue(String key) {
         if (null == search) {
             return "";
         } else {
-            return search.get(key) == null ? "" : search.get(key);
+            if (StringUtils.isBlank(search.get(key))) {
+                return "";
+            } else {
+                return search.get(key);
+            }
         }
     }
 

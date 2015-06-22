@@ -47,6 +47,7 @@ public class ClientCar extends Application {
                     .fetch(pageModel.getCurrentPage(), PageModel.DEFAULT_PAGES);
         }
 
+        pageModel.putSearch("carNo", carNo);
         render(carList, pageModel);
     }
 

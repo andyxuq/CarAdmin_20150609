@@ -22,7 +22,8 @@
                     <div class="form-inline" style="margin-top:16px">
                         <div class="input-group">
                             #{form @StoreRecordController.getResources(), method:'POST', enctype :'multipart/form-data', id:'queryByRecord'}
-                                <input type="text" class="form-control input-sm pull-left" name="carNo" placeholder="请输入车牌号">
+                                <input type="text" class="form-control input-sm pull-left" name="carNo"
+                                      value="${pageModel.getSearchValue('carNo')}" placeholder="请输入车牌号">
                                 <div class="input-group-btn pull-left">
                                     <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
                                 </div>
@@ -33,7 +34,12 @@
                                 <select name="resourceId" class="form-control input-sm pull-left" >
                                     <option value="">不限</option>
                                     #{list items:resourceList, as:'resource'}
-                                        <option value="${resource.id}">${resource.brand.name}->${resource.category.name}->${resource.type}</option>
+                                        #{if pageModel.getSearchValue('resourceId') == resource.id.toString()}
+                                            <option value="${resource.id}" selected>${resource.brand.name}->${resource.category.name}->${resource.type}</option>
+                                        #{/if}
+                                        #{else }
+                                            <option value="${resource.id}">${resource.brand.name}->${resource.category.name}->${resource.type}</option>
+                                        #{/else}
                                     #{/list}
                                 </select>
                                 <div class="input-group-btn pull-left">
@@ -100,13 +106,13 @@
                         当前第${pageModel.currentPage}页共${pageModel.count}条记录
                     </div>
                     <ul class="pagination pagination-sm no-margin pull-right">
-                        <li><a href="#" onclick="showContent('/StoreRecordController/getResources?page=${pageModel.currentPage - 1}')">&laquo;</a></li>
+                        <li><a href="#" onclick="showContent('/StoreRecordController/getResources?page=${pageModel.currentPage - 1}${pageModel.getSearch()}')">&laquo;</a></li>
                     #{if pageModel.totalPage !=0 }
                         #{list 1..pageModel.totalPage, as:'pageNum'}
-                            <li><a href="#" onclick="showContent('/StoreRecordController/getResources?page=${pageNum}')">${pageNum}</a></li>
+                            <li><a href="#" onclick="showContent('/StoreRecordController/getResources?page=${pageNum}${pageModel.getSearch()}')">${pageNum}</a></li>
                         #{/list}
                     #{/if}
-                        <li><a href="#" onclick="showContent('/StoreRecordController/getResources?page=${pageModel.currentPage + 1}')">&raquo;</a></li>
+                        <li><a href="#" onclick="showContent('/StoreRecordController/getResources?page=${pageModel.currentPage + 1}${pageModel.getSearch()}')">&raquo;</a></li>
                     </ul>
                 </div>
             </div><!-- /.box -->

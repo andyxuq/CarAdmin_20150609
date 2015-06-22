@@ -48,6 +48,8 @@ public class AdminUser extends Application {
                     .fetch(pageModel.getCurrentPage(), PageModel.DEFAULT_PAGES);
         }
 
+        pageModel.putSearch("phone", phone);
+        pageModel.putSearch("nickName", userName);
         render(userList, pageModel);
     }
 

@@ -22,7 +22,8 @@
                     <div class="form-inline" style="margin-top:16px">
                         <div class="input-group">
                             #{form @ClientCar.showClientCar(), method:'POST', enctype :'multipart/form-data', id:'queryByName'}
-                                <input type="text" name="carNo" class="form-control input-sm pull-left" style="width: 170px;" placeholder="请输入车牌号"/>
+                                <input type="text" name="carNo" class="form-control input-sm pull-left"
+                                      value="${pageModel?.getSearchValue('carNo')}" style="width: 170px;" placeholder="请输入车牌号"/>
                                 <div class="input-group-btn pull-left">
                                     <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
                                 </div>
@@ -72,13 +73,13 @@
                         当前第${pageModel.currentPage}页共${pageModel.count}条记录
                     </div>
                     <ul class="pagination pagination-sm no-margin pull-right">
-                        <li><a href="#" onclick="showContent('/clientCar/showClientCar?page=${pageModel.currentPage - 1}')">&laquo;</a></li>
+                        <li><a href="#" onclick="showContent('/clientCar/showClientCar?page=${pageModel.currentPage - 1}${pageModel.getSearch()}')">&laquo;</a></li>
                     #{if pageModel.totalPage !=0 }
                         #{list 1..pageModel.totalPage, as:'pageNum'}
-                            <li><a href="#" onclick="showContent('/clientCar/showClientCar?page=${pageNum}')">${pageNum}</a></li>
+                            <li><a href="#" onclick="showContent('/clientCar/showClientCar?page=${pageNum}${pageModel.getSearch()}')">${pageNum}</a></li>
                         #{/list}
                     #{/if}
-                        <li><a href="#" onclick="showContent('/clientCar/showClientCar?page=${pageModel.currentPage + 1}')">&raquo;</a></li>
+                        <li><a href="#" onclick="showContent('/clientCar/showClientCar?page=${pageModel.currentPage + 1}${pageModel.getSearch()}')">&raquo;</a></li>
                     </ul>
                 </div>
             </div><!-- /.box -->

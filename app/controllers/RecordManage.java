@@ -48,6 +48,8 @@ public class RecordManage extends Application {
         } else {
             pageModel = getRecordByDefault(recordList,  page);
         }
+        pageModel.putSearch("carNo", carNo);
+        pageModel.putSearch("clientName", clientName);
         recordList = (List<CarRecord>) pageModel.getDataList();
         render(recordList, pageModel);
     }

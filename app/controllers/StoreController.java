@@ -45,6 +45,9 @@ public class StoreController extends Application {
             int count = (int) ResourceStore.count(sql, args.toArray());
             sql += " order by id desc";
             PageModel pageModel = new PageModel(count, page);
+            pageModel.putSearch("startDate", startDate);
+            pageModel.putSearch("endDate", endDate);
+            pageModel.putSearch("resourceId", resourceId +"");
             List<Object> storeList = ResourceStore.find(sql, args.toArray()).fetch(pageModel.getCurrentPage(), PageModel.DEFAULT_PAGES);
 
             render(storeList, pageModel, resourceList);

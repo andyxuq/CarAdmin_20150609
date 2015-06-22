@@ -43,6 +43,8 @@ public class ClientManage extends Application{
                     .fetch(pageModel.getCurrentPage(), PageModel.DEFAULT_PAGES);
         }
 
+        pageModel.putSearch("clientName", userName);
+        pageModel.putSearch("clientPhone", phone);
         finishRecord = (int) CarRecord.count("finishDate is not null");
         processRecord = (int) CarRecord.count("finishDate is null");
         renderArgs.put("totalClient", totalClient);

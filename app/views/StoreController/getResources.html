@@ -25,7 +25,12 @@
                                 <select name="resourceId" class="form-control input-sm pull-left" >
                                     <option value="">不限</option>
                                     #{list items:resourceList, as:'resource'}
-                                        <option value="${resource.id}">${resource.brand.name}->${resource.category.name}->${resource.type}</option>
+                                        #{if pageModel.getSearchValue('resourceId') == resource.id.toString()}
+                                            <option value="${resource.id}" selected>${resource.brand.name}->${resource.category.name}->${resource.type}</option>
+                                        #{/if}
+                                        #{else }
+                                            <option value="${resource.id}">${resource.brand.name}->${resource.category.name}->${resource.type}</option>
+                                        #{/else}
                                     #{/list}
                                 </select>
                                 <div class="input-group-btn pull-left">
@@ -35,8 +40,10 @@
                         </div>
                         <div class="input-group">
                             #{form @StoreController.getResources(), method:'POST', enctype :'multipart/form-data', id:'queryByDate'}
-                                <input type="text" class="form-control" name="startDate" id="startDate" value="" placeholder="开始进货日期">
-                                <input type="text" class="form-control" name="endDate" id="endDate" placeholder="截止进货日期">
+                                <input type="text" class="form-control" name="startDate" id="startDate"
+                                       value="${pageModel?.getSearchValue('startDate')}" placeholder="开始进货日期">
+                                <input type="text" class="form-control" name="endDate" id="endDate"
+                                       value="${pageModel?.getSearchValue('endDate')}"  placeholder="截止进货日期">
                                 <div class="input-group-btn pull-left">
                                     <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
                                 </div>
@@ -86,13 +93,13 @@
                         当前第${pageModel.currentPage}页共${pageModel.count}条记录
                     </div>
                     <ul class="pagination pagination-sm no-margin pull-right">
-                        <li><a href="#" onclick="showContent('/StoreController/getResources?page=${pageModel.currentPage - 1}')">&laquo;</a></li>
+                        <li><a href="#" onclick="showContent('/StoreController/getResources?page=${pageModel.currentPage - 1}${pageModel.getSearch()}')">&laquo;</a></li>
                     #{if pageModel.totalPage !=0 }
                         #{list 1..pageModel.totalPage, as:'pageNum'}
-                            <li><a href="#" onclick="showContent('/StoreController/getResources?page=${pageNum}')">${pageNum}</a></li>
+                            <li><a href="#" onclick="showContent('/StoreController/getResources?page=${pageNum}${pageModel.getSearch()}')">${pageNum}</a></li>
                         #{/list}
                     #{/if}
-                        <li><a href="#" onclick="showContent('/StoreController/getResources?page=${pageModel.currentPage + 1}')">&raquo;</a></li>
+                        <li><a href="#" onclick="showContent('/StoreController/getResources?page=${pageModel.currentPage + 1}${pageModel.getSearch()}')">&raquo;</a></li>
                     </ul>
                 </div>
             </div><!-- /.box -->

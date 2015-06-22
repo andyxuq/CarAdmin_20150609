@@ -28,7 +28,12 @@
                                 <select name="brandId" class="form-control input-sm pull-left" >
                                     <option value="">不限</option>
                                     #{list items:brandList, as:'brand'}
-                                        <option value="${brand.id}">${brand.name}</option>
+                                        #{if pageModel.getSearchValue('brandId') == brand.id.toString()}
+                                            <option value="${brand.id}" selected>${brand.name}</option>
+                                        #{/if}
+                                        #{else }
+                                            <option value="${brand.id}">${brand.name}</option>
+                                        #{/else}
                                     #{/list}
                                 </select>
                                 <div class="input-group-btn pull-left">
@@ -41,7 +46,12 @@
                                 <select name="categoryId" class="form-control input-sm pull-left" >
                                     <option value="">不限</option>
                                     #{list items:categoryList, as:'category'}
-                                        <option value="${category.id}">${category.name}</option>
+                                        #{if pageModel.getSearchValue('categoryId') == category.id.toString()}
+                                            <option value="${category.id}" selected>${category.name}</option>
+                                        #{/if}
+                                        #{else }
+                                            <option value="${category.id}">${category.name}</option>
+                                        #{/else}
                                     #{/list}
                                 </select>
                                 <div class="input-group-btn pull-left">
@@ -51,7 +61,8 @@
                         </div>
                         <div class="input-group">
                             #{form @ResourceController.getResources(), method:'POST', enctype :'multipart/form-data', id:'queryByType'}
-                                <input type="text" name="type" class="form-control input-sm pull-left" placeholder="请输入型号查询"/>
+                                <input type="text" name="type" class="form-control input-sm pull-left"
+                                      value="${pageModel?.getSearchValue('type')}" placeholder="请输入型号查询"/>
                                 <div class="input-group-btn pull-left">
                                     <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
                                 </div>
@@ -103,13 +114,13 @@
                         当前第${pageModel.currentPage}页共${pageModel.count}条记录
                     </div>
                     <ul class="pagination pagination-sm no-margin pull-right">
-                        <li><a href="#" onclick="showContent('/ResourceController/getResources?page=${pageModel.currentPage - 1}')">&laquo;</a></li>
+                        <li><a href="#" onclick="showContent('/ResourceController/getResources?page=${pageModel.currentPage - 1}${pageModel.getSearch()}')">&laquo;</a></li>
                     #{if pageModel.totalPage !=0 }
                         #{list 1..pageModel.totalPage, as:'pageNum'}
-                            <li><a href="#" onclick="showContent('/ResourceController/getResources?page=${pageNum}')">${pageNum}</a></li>
+                            <li><a href="#" onclick="showContent('/ResourceController/getResources?page=${pageNum}${pageModel.getSearch()}')">${pageNum}</a></li>
                         #{/list}
                     #{/if}
-                        <li><a href="#" onclick="showContent('/ResourceController/getResources?page=${pageModel.currentPage + 1}')">&raquo;</a></li>
+                        <li><a href="#" onclick="showContent('/ResourceController/getResources?page=${pageModel.currentPage + 1}${pageModel.getSearch()}')">&raquo;</a></li>
                     </ul>
                 </div>
             </div><!-- /.box -->
