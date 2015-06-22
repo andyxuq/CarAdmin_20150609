@@ -24,7 +24,7 @@ POST    /clientAction/saveClient                ClientManage.saveClientInfo
 GET     /clientAction/showClientData            ClientManage.addClientInfo
 GET     /clientAction/deleteClientData          ClientManage.deleteClientInfo
 
-GET     /clientAction/showCarType               ClientManage.showCarType
+*       /clientAction/showCarType               ClientManage.showCarType
 POST    /clientAction/addCarType                ClientManage.addCarType
 GET     /clientAction/modifyCarType             ClientManage.modifyCarType
 GET     /clientAction/deleteCarType             ClientManage.deleteCarType

@@ -92,12 +92,24 @@ public class ClientManage extends Application{
         if (page == 0) {
             page = 1;
         }
-        int count = (int) CarType.count("type = ?", CarType.MODEL_TYPE);
-        PageModel pageModel = new PageModel(count, page);
 
-        List<CarType> carTypeList = CarType.find("type = ? order by id desc", CarType.MODEL_TYPE)
-                .fetch(pageModel.getCurrentPage(), PageModel.DEFAULT_PAGES);
-        render(carTypeList, pageModel);
+        String brandName = params.get("brandName");
+        if (StringUtils.isNotBlank(brandName)) {
+            int count = (int) CarType.count("from t_car_type t where t.type = ? and exists (select 1 from t_car_type p where p.id = t.brandId and p.name like ?)", CarType.MODEL_TYPE, "%" + brandName + "%");
+            PageModel pageModel = new PageModel(count, page);
+            pageModel.putSearch("brandName", brandName);
+
+            List<CarType> carTypeList = CarType.find("from t_car_type t where t.type = ? and exists (select 1 from t_car_type p where p.id = t.brandId and p.name like ?)", CarType.MODEL_TYPE, "%" + brandName + "%")
+                    .fetch(pageModel.getCurrentPage(), PageModel.DEFAULT_PAGES);
+            render(carTypeList, pageModel);
+        } else {
+            int count = (int) CarType.count("type = ?", CarType.MODEL_TYPE);
+            PageModel pageModel = new PageModel(count, page);
+
+            List<CarType> carTypeList = CarType.find("type = ? order by id desc", CarType.MODEL_TYPE)
+                    .fetch(pageModel.getCurrentPage(), PageModel.DEFAULT_PAGES);
+            render(carTypeList, pageModel);
+        }
     }
 
     public static void addCarType(String brandName, String modelName) {

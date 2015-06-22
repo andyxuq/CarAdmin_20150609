@@ -81,4 +81,24 @@
             </table>
         </div><!-- /.col -->
     </div><!-- /.row -->
+    <div class="box-footer clearfix">
+        <div class="pagination pagination-sm no-margin pull-left">
+            当前第${pageModel.currentPage}页共${pageModel.count}条记录
+        </div>
+        <ul class="pagination pagination-sm no-margin pull-right">
+            <li><a href="#" onclick="showMainPage('/UserManage/showMainPage?page=${pageModel.currentPage - 1}${pageModel.getSearch()}')">&laquo;</a></li>
+        #{if pageModel.totalPage !=0 }
+            #{list 1..pageModel.totalPage, as:'pageNum'}
+                <li><a href="#" onclick="showMainPage('/UserManage/showMainPage?page=${pageNum}${pageModel.getSearch()}')">${pageNum}</a></li>
+            #{/list}
+        #{/if}
+            <li><a href="#" onclick="showMainPage('/UserManage/showMainPage?page=${pageModel.currentPage + 1}${pageModel.getSearch()}')">&raquo;</a></li>
+        </ul>
+    </div>
 </section><!-- /.content -->
+
+<script>
+    function showMainPage(url) {
+        window.location.href = url;
+    }
+</script>

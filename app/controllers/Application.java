@@ -47,16 +47,17 @@ public class Application extends Controller {
                 userInfo = dbUser;
                 session.put(SESSION_USER_KEY, userInfo.getUserString());
 
-                List<CarRecord> recordList = CarRecord.find("userId = ? order by id desc", userInfo.getId()).fetch();
-                int finishNum = 0, workNum = 0;
-                for (CarRecord record : recordList) {
-                    if (record.backDate == null) {
-                        workNum++;
-                    } else {
-                        finishNum++;
-                    }
-                }
-                renderTemplate("UserManage/doLogin.html", userInfo, recordList, finishNum, workNum);
+//                List<CarRecord> recordList = CarRecord.find("userId = ? order by id desc", userInfo.getId()).fetch();
+//                int finishNum = 0, workNum = 0;
+//                for (CarRecord record : recordList) {
+//                    if (record.backDate == null) {
+//                        workNum++;
+//                    } else {
+//                        finishNum++;
+//                    }
+//                }
+//                renderTemplate("UserManage/doLogin.html", userInfo, recordList, finishNum, workNum);
+                UserManage.showMainPage(0);
             }
         }
 
@@ -71,16 +72,17 @@ public class Application extends Controller {
             if (null != dbUser) {
                 userInfo = dbUser;
                 session.put(SESSION_USER_KEY, userInfo.getUserString());
-                List<CarRecord> recordList = CarRecord.find("userId = ? order by id desc", userInfo.getId()).fetch();
-                int finishNum = 0, workNum = 0;
-                for (CarRecord record : recordList) {
-                    if (record.backDate == null) {
-                        workNum++;
-                    } else {
-                        finishNum++;
-                    }
-                }
-                renderTemplate("UserManage/doLogin.html", userInfo, recordList, finishNum, workNum);
+//                List<CarRecord> recordList = CarRecord.find("userId = ? order by id desc", userInfo.getId()).fetch();
+//                int finishNum = 0, workNum = 0;
+//                for (CarRecord record : recordList) {
+//                    if (record.backDate == null) {
+//                        workNum++;
+//                    } else {
+//                        finishNum++;
+//                    }
+//                }
+//                renderTemplate("UserManage/doLogin.html", userInfo, recordList, finishNum, workNum);
+                UserManage.showMainPage(0);
             }
         } else {
             render();

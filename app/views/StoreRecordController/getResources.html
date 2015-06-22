@@ -41,7 +41,7 @@
                                 </div>
                             #{/form}
                         </div>
-                        *{<button class="btn btn-default" id="addClient" data-toggle="modal"><i class="fa fa-plus"></i>添加配件</button>}*
+                        <button class="btn btn-default" id="addClient" data-toggle="modal"><i class="fa fa-plus"></i>查看维修记录</button>
                     </div>
                 </div><!-- /.box-header -->
                 <div class="box-body">
@@ -126,6 +126,10 @@
                 function(){}
         )
     }
+
+    $("#addClient").click(function(){
+        showContent('/clientRecord/showCarRecord');
+    });
 
     function deleteData(resourceId) {
         bconfirm('确定删除吗？', function(){

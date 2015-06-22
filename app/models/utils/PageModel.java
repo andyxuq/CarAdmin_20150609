@@ -2,7 +2,9 @@ package models.utils;
 
 import play.db.Model;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: xuqing
@@ -21,6 +23,8 @@ public class PageModel {
     /** 总条数 */
     private int count;
 
+    private Map<String, String> search;
+
     public PageModel(int count, int currentPage) {
         this.count = count;
         this.currentPage = currentPage;
@@ -32,6 +36,33 @@ public class PageModel {
         }
         if (this.currentPage > this.totalPage) {
             this.currentPage = totalPage;
+        }
+    }
+
+    public void putSearch(String key, String value) {
+        if (null == search) {
+            search = new HashMap<String, String>();
+        }
+        search.put(key, value);
+    }
+
+    public String getSearchValue(String key) {
+        if (null == search) {
+            return "";
+        } else {
+            return search.get(key) == null ? "" : search.get(key);
+        }
+    }
+
+    public String getSearch() {
+        if (null == search) {
+            return "";
+        } else {
+            StringBuffer searchBuilder = new StringBuffer();
+            for (Map.Entry<String, String> entry : search.entrySet()) {
+                searchBuilder.append("&" + entry.getKey() + "=" + entry.getValue());
+            }
+            return searchBuilder.toString();
         }
     }
 
