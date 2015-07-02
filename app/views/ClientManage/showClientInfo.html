@@ -107,7 +107,7 @@
                             <th>地址</th>
                             <th>备注</th>
                             <th style="width: 90px">服务次数</th>
-                            <th style="width: 250px">操作</th>
+                            <th style="width: 350px">操作</th>
                         </tr>
                     #{list clientList, as : 'client'}
                         <tr>
@@ -121,6 +121,7 @@
                             <td>
                                 <div class="btn-group" role="group" aria-label="...">
                                     <button type="button" class="btn btn-default" onclick="addCarInfo(${client.id});">[添加用车]</button>
+                                    <button type="button" class="btn btn-default" onclick="listCar(${client.id});">[用车列表]</button>
                                     <button type="button" class="btn btn-primary" onclick="modifyData(${client.id});">[修改]</button>
                                     <button type="button" class="btn btn-danger"  onclick="deleteData(${client.id});">[删除]</button>
                                 </div>
@@ -153,6 +154,10 @@
 </div>
 
 <script type="text/javascript">
+    function listCar(clientId) {
+        showContent("/clientCar/showClientCar?clientId=" + clientId);
+    }
+
     $("#addClient").click(function(){
         var action = #{jsAction @ClientManage.addClientInfo(':clientId')/};
         $("#modifyTypeModal").load(

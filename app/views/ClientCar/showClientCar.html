@@ -44,7 +44,7 @@
                             <th>车架号</th>
                             <th>购车日期</th>
                             <th>保险承保公司</th>
-                            <th style="width: 270px">操作</th>
+                            <th style="width: 420px">操作</th>
                         </tr>
                     #{list carList, as : 'car'}
                         <tr>
@@ -60,6 +60,7 @@
                             <td>
                                 <div class="btn-group" role="group" >
                                     <button type="button" class="btn btn-default" onclick="addRecordInfo(${car.id});">[添加维护记录]</button>
+                                    <button type="button" class="btn btn-default" onclick="listRecord('${car.carNo}');">[维护记录列表]</button>
                                     <button type="button" class="btn btn-primary" onclick="modifyData(${car.id});">[修改]</button>
                                     <button type="button" class="btn btn-danger" onclick="deleteData(${car.id});">[删除]</button>
                                 </div>
@@ -92,6 +93,10 @@
 </div>
 
 <script type="text/javascript">
+    function listRecord(carNo) {
+        showContent("/clientRecord/showCarRecord?carNo=" + carNo);
+    }
+
     function backToClient() {
         showContent('/clientAction/showClient');
     }

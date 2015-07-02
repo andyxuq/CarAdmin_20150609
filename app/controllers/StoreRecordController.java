@@ -23,7 +23,7 @@ public class StoreRecordController extends Application {
 
         String recordId = params.get("recordId");
         String resourceId = params.get("resourceId");
-        String carNum = params.get("carNum");
+        String carNum = params.get("carNo");
 
         StringBuffer query = new StringBuffer();
         List<Object> args = new ArrayList<Object>();
@@ -58,7 +58,7 @@ public class StoreRecordController extends Application {
             sql += " order by id desc";
             PageModel pageModel = new PageModel(count, page);
             pageModel.putSearch("resourceId", resourceId);
-            pageModel.putSearch("carNum", carNum);
+            pageModel.putSearch("carNo", carNum);
 
             List<Object> recordList = StoreRecord.find(sql, args.toArray()).fetch(pageModel.getCurrentPage(), PageModel.DEFAULT_PAGES);
 
