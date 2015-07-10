@@ -56,32 +56,28 @@
                     </a>
                     <div class="navbar-custom-menu">
                         <ul class="nav navbar-nav">
-                            <!-- User Account: style can be found in dropdown.less -->
-                            <li class="dropdown user user-menu" >
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    <img src="#{get 'uLogo' /}" class="user-image" alt="User Image"/>
-                                    <span class="hidden-xs">#{get 'uNickName' /}</span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <!-- User image -->
-                                    <li class="user-header">
-                                        <img src="#{get 'uLogo' /}" class="img-circle" alt="User Image" />
-                                        <p>
-                                            #{get 'uNickName' /}
-                                            <small>加入时间:#{get 'uCreatedAt' /}</small>
-                                        </p>
-                                    </li>
-                                    <!-- Menu Footer-->
-                                    <li class="user-footer">
-                                        <div class="pull-left">
-                                            *{<a href="#" class="btn btn-default btn-flat">Profile</a>}*
-                                        </div>
-                                        <div class="pull-right">
-                                            #{a @UserManage.doLoginOut(), class:'btn btn-default btn-flat'}退出#{/a}
-                                        </div>
-                                    </li>
-                                </ul>
-                            </li>
+                            *{<li class="dropdown user user-menu" >}*
+                                *{<a href="#" class="dropdown-toggle" data-toggle="dropdown">}*
+                                    *{<img src="#{get 'uLogo' /}" class="user-image" alt="User Image"/>}*
+                                    *{<span class="hidden-xs">#{get 'uNickName' /}</span>}*
+                                *{</a>}*
+                                *{<ul class="dropdown-menu">}*
+                                    *{<li class="user-header">}*
+                                        *{<img src="#{get 'uLogo' /}" class="img-circle" alt="User Image" />}*
+                                        *{<p>}*
+                                            *{#{get 'uNickName' /}}*
+                                            *{<small>加入时间:#{get 'uCreatedAt' /}</small>}*
+                                        *{</p>}*
+                                    *{</li>}*
+                                    *{<li class="user-footer">}*
+                                        *{<div class="pull-left">}*
+                                        *{</div>}*
+                                        *{<div class="pull-right">}*
+                                            *{#{a @UserManage.doLoginOut(), class:'btn btn-default btn-flat'}退出#{/a}}*
+                                        *{</div>}*
+                                    *{</li>}*
+                                *{</ul>}*
+                            *{</li>}*
                         </ul>
                     </div>
                 </nav>
@@ -96,9 +92,9 @@
                             <img src="#{get 'uLogo' /}" class="img-circle" alt="User Image" />
                         </div>
                         <div class="pull-left info">
-                            <p>#{get 'uNickName'/}</p>
+                            <p>欢迎您：#{get 'uNickName'/}</p>
 
-                            <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                            #{a @UserManage.doLoginOut()}<i class="fa fa-circle text-success"></i>&nbsp;&nbsp;注销#{/a}
                         </div>
                     </div>
                     <!-- search form -->
