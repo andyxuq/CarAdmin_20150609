@@ -44,7 +44,8 @@
                             <th>车架号</th>
                             <th>购车日期</th>
                             <th>保险承保公司</th>
-                            <th style="width: 420px">操作</th>
+                            <th>发动机型号</th>
+                            <th style="width: 450px">操作</th>
                         </tr>
                     #{list carList, as : 'car'}
                         <tr>
@@ -57,6 +58,7 @@
                             <td>${car.carFrameNo}</td>
                             <td>${car.getDateString()}</td>
                             <td>${car.insuranceCompany}</td>
+                            <td>${car.engineNo}</td>
                             <td>
                                 <div class="btn-group" role="group" >
                                     <button type="button" class="btn btn-default" onclick="addRecordInfo(${car.id});">[添加维护记录]</button>

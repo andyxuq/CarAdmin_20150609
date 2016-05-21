@@ -55,7 +55,7 @@
                             <th>责任人</th>
                             <th>里程数</th>
                             <th>费用</th>
-                            <th style="width: 400px">操作</th>
+                            <th style="width: 430px">操作</th>
                         </tr>
                     #{list recordList, as : 'record'}
                         <tr>
@@ -100,7 +100,8 @@
                             <td>
                                 <div class="btn-group" role="group" >
                                     <button type="button" class="btn btn-default" onclick="addRecordInfo(${record.id});">[使用材料]</button>
-                                    <button type="button" class="btn btn-default" onclick="listRecord('${record.car.carNo}');">[材料列表]</button>
+                                    <button type="button" class="btn btn-default" onclick="listRecord('${record.id}');">[材料列表]</button>
+                                    <button type="button" class="btn btn-default" onclick="backToClientCar('${record.car.carNo}');">[返回用车]</button>
                                     <button type="button" class="btn btn-primary" onclick="modifyData(${record.id});">[修改]</button>
                                     <button type="button" class="btn btn-danger" onclick="deleteData(${record.id});">[删除]</button>
                                 </div>
@@ -133,8 +134,8 @@
 </div>
 
 <script type="text/javascript">
-    function listRecord(carNo) {
-        showContent("/StoreRecordController/getResources?carNo=" + carNo);
+    function listRecord(recordId) {
+        showContent("/StoreRecordController/getResources?recordId=" + recordId);
     }
 
     function addRecordInfo(recordId) {
@@ -152,6 +153,10 @@
 
     function backToCar() {
         showContent('/clientCar/showClientCar');
+    }
+
+    function backToClientCar(carNo) {
+        showContent('/clientCar/showClientCar?carNo=' + carNo);
     }
 
     function modifyData(recordId) {

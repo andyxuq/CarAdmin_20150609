@@ -36,8 +36,17 @@ public class StoreRecord extends Model {
         if (null == createdAt) {
             return "";
         } else {
-            DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             return format.format(createdAt);
+        }
+    }
+
+    public String getTotalNameById(long id) {
+        Resource res = Resource.findById(id);
+        if (null == res) {
+            return "";
+        } else {
+            return res.brand.name + "->" + res.category.name + "->" + res.type;
         }
     }
 }

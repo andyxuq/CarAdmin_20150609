@@ -37,11 +37,16 @@ public class Car extends Model {
     @JoinColumn(name = "clientId")
     public Client client;
 
+    public String engineNo;
+
     @OneToMany(mappedBy = "car", cascade = {CascadeType.REFRESH, CascadeType.REMOVE})
     public List<CarRecord> recordList;
 
     public String getCarModelName() {
         CarType modelType = CarType.findById(modelId);
+        if (null == modelType) {
+            return "未找到该车型号";
+        }
         return "[" + modelType.getBrandName() + "]" + modelType.name;
     }
 
@@ -52,5 +57,15 @@ public class Car extends Model {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             return format.format(buyDate);
         }
+    }
+
+
+    public String getBrandNameById(long modelId) {
+        CarType type = CarType.findById(modelId);
+        if (null == type) {
+            return "";
+        }
+        CarType brandType = CarType.findById(type.brandId);
+        return "[" + brandType.name + "]" + type.name;
     }
 }

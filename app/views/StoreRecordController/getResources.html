@@ -63,7 +63,8 @@
                             <th>规格</th>
                             <th>数量</th>
                             <th>收费</th>
-                            <th style="width: 250px">操作</th>
+                            <th>维护记录ID</th>
+                            <th style="width: 300px">操作</th>
                         </tr>
                     #{list recordList, as : 'res'}
                         <tr>
@@ -91,8 +92,10 @@
                             <td>${res.resource.spec}</td>
                             <td>${res.resourceNum}</td>
                             <td>${res.salesPrice}</td>
+                            <td>${res.carRecord.id}</td>
                             <td>
                                 <div class="btn-group" role="group" aria-label="...">
+                                    <button type="button" class="btn btn-default" onclick="backToRecord(${res.carRecord.id});">[返回维修记录]</button>
                                     <button type="button" class="btn btn-primary" onclick="modifyData(${res.id});">[修改]</button>
                                     <button type="button" class="btn btn-danger"  onclick="deleteData(${res.id});">[删除]</button>
                                 </div>
@@ -131,6 +134,10 @@
                 action({resourceId:resourceId}),
                 function(){}
         )
+    }
+
+    function backToRecord(recordId) {
+        showContent('/clientRecord/showCarRecord?recordId=' + recordId);
     }
 
     $("#addClient").click(function(){

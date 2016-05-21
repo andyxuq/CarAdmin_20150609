@@ -1,6 +1,7 @@
 package controllers;
 
 
+import models.client.Car;
 import models.client.CarRecord;
 import models.client.CarType;
 import models.client.Client;
@@ -148,8 +149,15 @@ public class ClientManage extends Application{
     }
 
     public static void deleteCarType(long modelId) {
-        CarType carType = CarType.findById(modelId);
-        carType.delete();
+        try {
+            CarType carType = CarType.findById(modelId);
+            carType.delete();
+
+            Car.delete("modelId = ?", modelId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            renderJSON(new Response(1, "该型号的汽车维护记录，操作失败"));
+        }
         renderJSON(new Response(0, "成功"));
     }
 }

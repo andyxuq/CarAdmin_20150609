@@ -87,7 +87,7 @@
         )
     }
     function deleteCarType(modelId) {
-        bconfirm('确定删除吗？', function(){
+        bconfirm('该操作会同时删除该型号对应的所有汽车，确定删除吗？', function(){
             var action = #{jsAction @ClientManage.deleteCarType(':modelId')/};
             console.log('aaa');
             $.get(

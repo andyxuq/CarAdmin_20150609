@@ -12,9 +12,7 @@ import org.apache.log4j.Logger;
 import play.db.jpa.JPABase;
 import utils.ToolUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by xuqing on 2015/3/14.
@@ -33,6 +31,7 @@ public class RecordManage extends Application {
         String carId = params.get("carId");
         String finished = params.get("finished");
         String processing = params.get("processing");
+        String recordId = params.get("recordId");
         if (StringUtils.isNotBlank(carNo)) {
             pageModel = getRecordByCarNo(recordList,  page, carNo);
         } else if (StringUtils.isNotBlank(clientName)) {
@@ -45,6 +44,8 @@ public class RecordManage extends Application {
         } else if (StringUtils.isNotBlank(processing)) {
             pageModel = getRecordWhichProcessing(recordList, page);
             pageModel.setProcess(1);
+        } else if (StringUtils.isNotBlank(recordId)) {
+            pageModel = getRecordById(recordList, page, recordId);
         } else {
             pageModel = getRecordByDefault(recordList,  page);
         }
@@ -61,6 +62,15 @@ public class RecordManage extends Application {
         pageModel.setDataList(recordList);
         return pageModel;
     }
+
+    static PageModel getRecordById(List<CarRecord> recordList, int page, String recordId) {
+        CarRecord record = CarRecord.findById(NumberUtils.toLong(recordId));
+        PageModel pageModel = new PageModel(1, page);
+        recordList.add(record);
+        pageModel.setDataList(recordList);
+        return pageModel;
+    }
+
     static PageModel getRecordByCarNo(List<CarRecord> recordList, int page, String carNo) {
         List<Car> carList = Car.find("carNo = ?", carNo).fetch();
         int count = 0;
@@ -68,6 +78,12 @@ public class RecordManage extends Application {
             count += car.recordList.size();
             recordList.addAll(car.recordList);
         }
+        Collections.sort(recordList, new Comparator<CarRecord>() {
+            @Override
+            public int compare(CarRecord o1, CarRecord o2) {
+                return NumberUtils.toInt(String.valueOf(o2.id - o1.id));
+            }
+        });
         PageModel pageModel = new PageModel(count, page);
         pageModel.setTotalPage(1);
         pageModel.setDataList(recordList);

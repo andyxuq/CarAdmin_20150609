@@ -31,7 +31,14 @@
                 </div>
                 <div class="form-group">
                     <label for="brandName">汽车型号：</label>
-                    <select class="form-control" name="car.modelId" id="modelId" >
+                    <input class="form-control" name="car.modelId" id="modelId" type="hidden" value="${car?.modelId}">
+                    #{if null != car}
+                        <input class="form-control" name="modelId_type" id="modelId_type" value="${car.getBrandNameById(car.modelId)}" readonly>
+                    #{/if}
+                    #{else }
+                        <input class="form-control" name="modelId_type" id="modelId_type">
+                    #{/else}
+                    <select class="form-control" name="modelId_s" id="modelId_s" style="display:none;" multiple="multiple">
                         #{list ctList, as:'carType'}
                             #{if null != car && car.modelId == carType.id}
                                 <option value="${carType.id}" selected="selected">[${carType.getBrandName()}]${carType.name}</option>
@@ -68,6 +75,11 @@
                     <input type="text" class="form-control" name="car.insuranceCompany" id="insuranceCompany" value="${car?.insuranceCompany}" placeholder="请输入保险公司">
                     <span class="note_e" id="insuranceCompany_note"></span>
                 </div>
+                <div class="form-group">
+                    <label for="brandName">发动机型号：</label>
+                    <input type="text" class="form-control" name="car.engineNo" id="engineNo" value="${car?.engineNo}" placeholder="请输入发动机型号">
+                    <span class="note_e" id="engineNo_note"></span>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -84,7 +96,8 @@
     $(".datepicker").remove();
     $('#buyDate').datepicker({
         format: "yyyy-mm-dd",
-        language: "zh-CN"
+        language: "zh-CN",
+        autoclose:true
     }).click(function(){
         $(this).datepicker('show');
         $(".datepicker").css("z-index", '999999');
@@ -93,10 +106,59 @@
         });
     });
 
+    var modelSelectArray = new Array();
+    $("#modelId_s option").each(function(){
+        var optionText = $(this).text();
+        var ovalue = this.value;
+        var option = {optionValue : ovalue, optionText : optionText};
+        modelSelectArray.push(option);
+    });
 
+
+    $("#modelId_type").keyup(function(){
+        var typeValue = $("#modelId_type").val();
+        console.log(typeValue);
+        var matched = 0;
+
+        $("#modelId_s").empty();
+        for (var key in modelSelectArray) {
+            if (modelSelectArray[key].optionText.indexOf(typeValue) != -1) {
+                matched++;
+                $("#modelId_s").append("<option value='"+modelSelectArray[key].optionValue+"'>" +modelSelectArray[key].optionText+ "</option>");
+            }
+        }
+
+        if (matched != 0) {
+            $("#modelId_s").show();
+            $("#modelId_note").html('');
+
+            $("#modelId_s").change(function(){
+                var text = $("#modelId_s").find("option:selected").text();
+                var value = $("#modelId_s").val();
+//                $("#modelId_type").show();
+                $("#modelId_type").val(text);
+                $("#modelId").val(value);
+
+                $("#modelId_s").hide();
+
+            });
+        } else {
+            $("#modelId_s").hide();
+            $("#modelId_note").html('无匹配汽车型号');
+        }
+
+    });
+
+    $("#modelId_type").blur(function(){
+        if ($(this).val().length == 0) {
+            $("#modelId").val('');
+        }
+    });
 
     var nameArray = [
-        {"name":"carNo", "msg":"请输如车牌号"}];
+        {"name":"carNo", "msg":"请输如车牌号"},
+        {"name":"modelId", "msg":"请选择车型号"}
+    ];
     $("#dataForm").submit(function(e){
         e.preventDefault();
         for (var index in nameArray) {

@@ -115,7 +115,8 @@
     $(".datepicker").remove();
     $('#startDate').datepicker({
         format: "yyyy-mm-dd",
-        language: "zh-CN"
+        language: "zh-CN",
+        autoclose:true
     }).click(function(){
         $(this).datepicker('show');
         $(".datepicker").css("z-index", '999999');
@@ -126,7 +127,8 @@
 
     $('#endDate').datepicker({
         format: "yyyy-mm-dd",
-        language: "zh-CN"
+        language: "zh-CN",
+        autoclose:true
     }).click(function(){
         $(this).datepicker('show');
         $(".datepicker").css("z-index", '999999');

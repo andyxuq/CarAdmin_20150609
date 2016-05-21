@@ -1,5 +1,6 @@
 package models.store;
 
+import play.db.jpa.JPABase;
 import play.db.jpa.Model;
 
 import javax.persistence.*;
@@ -36,4 +37,5 @@ public class Resource extends Model{
 
     /** 销售价 */
     public String salesPrice;
+
 }

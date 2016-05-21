@@ -30,16 +30,16 @@
                 </div>
                 <div class="form-group">
                     <label for="brandName">配件选择：</label>
-                    <select class="form-control" name="resource.resource.id" id = "resBrand" >
+                    <input type="hidden" class="form-control" name="resource.resource.id" id="r_resource_id" value="${resource?.resource?.id}"/>
+                    #{if null != resource}
+                        <input class="form-control" id="r_resource_name" value="${resource.getTotalNameById(resource.resource.id)}"/>
+                    #{/if}
+                    #{else }
+                        <input class="form-control" id="r_resource_name"/>
+                    #{/else}
+                    <select class="form-control" name="resource.resource.id" id = "resBrand" style="display:none;"   multiple="multiple">
                         #{list items:resourceList, as:'res'}
-                            #{if resource != null && resource.resource.id == res.id}
-                                <option value="${res.id}" selected = "selected" onfocus="this.defaultIndex=this.selectedIndex;" onchange="this.selectedIndex=this.defaultIndex;">
-                                    ${res.brand.name}->${res.category.name}->${res.type}
-                                </option>
-                            #{/if}
-                            #{else }
-                                <option value="${res.id}" >${res.brand.name}->${res.category.name}->${res.type}</option>
-                            #{/else}
+                            <option value="${res.id}" >${res.brand.name}->${res.category.name}->${res.type}</option>
                         #{/list}
                     </select>
                     <span class="note_e" id="resCategory_note"></span>
@@ -79,13 +79,55 @@
 
     $('#createdAt').datepicker({
         format: "yyyy-mm-dd",
-        language: "zh-CN"
+        language: "zh-CN",
+        autoclose: true
     }).click(function(){
         $(this).datepicker('show');
         $(".datepicker").css("z-index", '999999');
         $(".datepicker").click(function(){
             $(".datepicker").css("z-index", '999999');
         });
+    });
+
+    var resourceSelectArray = new Array();
+    $("#resBrand option").each(function(){
+        var optionText = $(this).text();
+        var ovalue = this.value;
+        var option = {optionValue : ovalue, optionText : optionText};
+        resourceSelectArray.push(option);
+    });
+
+    $("#r_resource_name").keyup(function(){
+        var typeValue = $("#r_resource_name").val();
+        console.log(typeValue);
+        var matched = 0;
+
+        $("#resBrand").empty();
+        for (var key in resourceSelectArray) {
+            if (resourceSelectArray[key].optionText.indexOf(typeValue) != -1) {
+                matched++;
+                $("#resBrand").append("<option value='"+resourceSelectArray[key].optionValue+"'>" +resourceSelectArray[key].optionText+ "</option>");
+            }
+        }
+
+        if (matched != 0) {
+            $("#resBrand").show();
+            $("#resCategory_note").html('');
+
+            $("#resBrand").change(function(){
+                var text = $("#resBrand").find("option:selected").text();
+                var value = $("#resBrand").val();
+//                $("#modelId_type").show();
+                $("#r_resource_name").val(text);
+                $("#r_resource_id").val(value);
+
+                $("#resBrand").hide();
+
+            });
+        } else {
+            $("#resBrand").hide();
+            $("#resCategory_note").html('无匹配材料类型');
+        }
     });
 
     var nameArray = [
@@ -122,7 +164,12 @@
                     balert('操作失败:' + data.msg);
                 } else {
                     balert('操作成功', function(){
-                         showContent('/StoreRecordController/getResources');
+                        #{if null != carRecord}
+                            showContent('/StoreRecordController/getResources?recordId=${carRecord.id}');
+                        #{/if}
+                        #{else }
+                            showContent('/StoreRecordController/getResources');
+                        #{/else}
                     });
                 }
             },
