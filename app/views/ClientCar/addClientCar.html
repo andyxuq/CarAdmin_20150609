@@ -33,7 +33,7 @@
                     <label for="brandName">汽车型号：</label>
                     <input class="form-control" name="car.modelId" id="modelId" type="hidden" value="${car?.modelId}">
                     #{if null != car}
-                        <input class="form-control" name="modelId_type" id="modelId_type" value="${car.getBrandNameById(car.modelId)}" readonly>
+                        <input class="form-control" name="modelId_type" id="modelId_type" value="${car.getBrandNameById(car.modelId)}">
                     #{/if}
                     #{else }
                         <input class="form-control" name="modelId_type" id="modelId_type">
